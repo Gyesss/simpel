@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Student\CompanyController;
+use App\Http\Controllers\Student\InternshipApplicationController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -48,14 +49,37 @@ Route::middleware(['auth', 'role:student'])->group(function () {
 
     // PKL Application
     Route::get('/student/applications', function () {
-        return 'Halaman Pengajuan PKL';
+        return view('student.applications.index');
     })->name('student.applications.index');
 
 
+    // Individual PKL Application
+    Route::get(
+        '/student/applications/individual',
+        [InternshipApplicationController::class, 'createIndividual']
+    )->name('student.applications.individual');
+
+
+    Route::post(
+        '/student/applications/individual',
+        [InternshipApplicationController::class, 'storeIndividual']
+    )->name('student.applications.individual.store');
+
+
+    // Group PKL Application
+    Route::get(
+        '/student/applications/group',
+        function () {
+            return 'Halaman Pengajuan Kelompok';
+        }
+    )->name('student.applications.group');
+
+
     // Application Status
-    Route::get('/student/application-status', function () {
-        return 'Halaman Status Pengajuan';
-    })->name('student.application-status');
+    Route::get(
+        '/student/application-status',
+        [InternshipApplicationController::class, 'status']
+    )->name('student.application-status');
 
 
     // Response Letter
