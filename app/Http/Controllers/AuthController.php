@@ -17,6 +17,7 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
+
     /**
      * Handle the login request.
      */
@@ -27,34 +28,62 @@ class AuthController extends Controller
                 'required',
                 'in:login_id,nis_nip,email',
             ],
+
             'identifier' => [
                 'required',
                 'string',
             ],
+
             'password' => [
                 'required',
             ],
         ]);
+
 
         $user = User::where(
             $credentials['login_type'],
             $credentials['identifier']
         )->first();
 
-        if ($user && Hash::check($credentials['password'], $user->password)) {
+
+        if (
+            $user &&
+            Hash::check(
+                $credentials['password'],
+                $user->password
+            )
+        ) {
+
             Auth::login($user);
 
             $request->session()->regenerate();
 
-            return redirect()->intended('/dashboard');
+
+            return match ($user->role) {
+
+                'student' => redirect()->route('student.dashboard'),
+
+                'hubin' => redirect()->route('hubin.dashboard'),
+
+                'company' => redirect()->route('company.dashboard'),
+
+                default => abort(403),
+            };
         }
+
 
         return back()
             ->withErrors([
                 'identifier' => 'The provided credentials do not match our records.',
             ])
-            ->withInput($request->only('login_type', 'identifier'));
+            ->withInput(
+                $request->only(
+                    'login_type',
+                    'identifier'
+                )
+            );
     }
+
 
     /**
      * Handle the logout request.
@@ -64,7 +93,9 @@ class AuthController extends Controller
         Auth::logout();
 
         $request->session()->invalidate();
+
         $request->session()->regenerateToken();
+
 
         return redirect('/login');
     }
