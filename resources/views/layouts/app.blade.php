@@ -79,7 +79,10 @@
                 {{-- Dashboard --}}
                 <a
                     href="{{ route('student.dashboard') }}"
-                    class="mb-1 flex items-center gap-3 rounded-xl bg-amber-50 px-3 py-2.5 text-sm font-semibold text-amber-600">
+                    class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition
+                        {{ request()->routeIs('student.dashboard')
+                            ? 'bg-amber-50 font-semibold text-amber-600'
+                            : 'font-medium text-slate-500 hover:bg-slate-50 hover:text-slate-900' }}">
 
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -105,8 +108,11 @@
 
                 {{-- Company Catalog --}}
                 <a
-                    href="#"
-                    class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-500 transition hover:bg-slate-50 hover:text-slate-900">
+                    href="{{ route('student.companies.index') }}"
+                    class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition
+                        {{ request()->routeIs('student.companies.*')
+                            ? 'bg-amber-50 font-semibold text-amber-600'
+                            : 'font-medium text-slate-500 hover:bg-slate-50 hover:text-slate-900' }}">
 
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -132,8 +138,11 @@
 
                 {{-- Application --}}
                 <a
-                    href="#"
-                    class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-500 transition hover:bg-slate-50 hover:text-slate-900">
+                    href="{{ route('student.applications.index') }}"
+                    class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition
+                        {{ request()->routeIs('student.applications.*')
+                            ? 'bg-amber-50 font-semibold text-amber-600'
+                            : 'font-medium text-slate-500 hover:bg-slate-50 hover:text-slate-900' }}">
 
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -146,7 +155,7 @@
                         <path
                             stroke-linecap="round"
                             stroke-linejoin="round"
-                            d="M9 12h6m-6 4h6m2.25-13.5h-10.5A2.25 2.25 0 0 0 4.5 4.75v14.5a2.25 2.25 0 0 0 2.25 2.25h10.5a2.25 2.25 0 0 0 2.25-2.25V4.75a2.25 2.25 0 0 0-2.25-2.25Z" />
+                            d="M9 12h6m-6 4h6m2.25-13.5h-10.5A2.25 2.25 0 0 0 4.5 4.75v14.5a2.25 2.25 0 0 0 2.25 2.25h10.5A2.25 2.25 0 0 0 19.5 19.25V4.75a2.25 2.25 0 0 0-2.25-2.25Z" />
 
                     </svg>
 
@@ -159,8 +168,11 @@
 
                 {{-- Application Status --}}
                 <a
-                    href="#"
-                    class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-500 transition hover:bg-slate-50 hover:text-slate-900">
+                    href="{{ route('student.application-status') }}"
+                    class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition
+                        {{ request()->routeIs('student.application-status')
+                            ? 'bg-amber-50 font-semibold text-amber-600'
+                            : 'font-medium text-slate-500 hover:bg-slate-50 hover:text-slate-900' }}">
 
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -186,8 +198,11 @@
 
                 {{-- Response Letter --}}
                 <a
-                    href="#"
-                    class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-500 transition hover:bg-slate-50 hover:text-slate-900">
+                    href="{{ route('student.response-letter') }}"
+                    class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition
+                        {{ request()->routeIs('student.response-letter')
+                            ? 'bg-amber-50 font-semibold text-amber-600'
+                            : 'font-medium text-slate-500 hover:bg-slate-50 hover:text-slate-900' }}">
 
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -222,7 +237,10 @@
                 {{-- Dashboard --}}
                 <a
                     href="{{ route('hubin.dashboard') }}"
-                    class="mb-1 flex items-center gap-3 rounded-xl bg-amber-50 px-3 py-2.5 text-sm font-semibold text-amber-600">
+                    class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition
+                        {{ request()->routeIs('hubin.dashboard')
+                            ? 'bg-amber-50 font-semibold text-amber-600'
+                            : 'font-medium text-slate-500 hover:bg-slate-50 hover:text-slate-900' }}">
 
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -248,8 +266,11 @@
 
                 {{-- Companies --}}
                 <a
-                    href="#"
-                    class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-500 transition hover:bg-slate-50 hover:text-slate-900">
+                    href="{{ route('hubin.companies.index') }}"
+                    class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition
+                        {{ request()->routeIs('hubin.companies.*')
+                            ? 'bg-amber-50 font-semibold text-amber-600'
+                            : 'font-medium text-slate-500 hover:bg-slate-50 hover:text-slate-900' }}">
 
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -275,8 +296,11 @@
 
                 {{-- Applications --}}
                 <a
-                    href="#"
-                    class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-500 transition hover:bg-slate-50 hover:text-slate-900">
+                    href="{{ route('hubin.applications.index') }}"
+                    class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition
+                        {{ request()->routeIs('hubin.applications.*')
+                            ? 'bg-amber-50 font-semibold text-amber-600'
+                            : 'font-medium text-slate-500 hover:bg-slate-50 hover:text-slate-900' }}">
 
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -289,7 +313,7 @@
                         <path
                             stroke-linecap="round"
                             stroke-linejoin="round"
-                            d="M9 12h6m-6 4h6m2.25-13.5h-10.5A2.25 2.25 0 0 0 4.5 4.75v14.5a2.25 2.25 0 0 0 2.25 2.25h10.5a2.25 2.25 0 0 0 2.25-2.25V4.75a2.25 2.25 0 0 0-2.25-2.25Z" />
+                            d="M9 12h6m-6 4h6m2.25-13.5h-10.5A2.25 2.25 0 0 0 19.5 4.75v14.5a2.25 2.25 0 0 0-2.25-2.25Z" />
 
                     </svg>
 
@@ -302,8 +326,11 @@
 
                 {{-- Introduction Letters --}}
                 <a
-                    href="#"
-                    class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-500 transition hover:bg-slate-50 hover:text-slate-900">
+                    href="{{ route('hubin.introduction-letters.index') }}"
+                    class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition
+                        {{ request()->routeIs('hubin.introduction-letters.*')
+                            ? 'bg-amber-50 font-semibold text-amber-600'
+                            : 'font-medium text-slate-500 hover:bg-slate-50 hover:text-slate-900' }}">
 
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -329,8 +356,11 @@
 
                 {{-- Supervisors --}}
                 <a
-                    href="#"
-                    class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-500 transition hover:bg-slate-50 hover:text-slate-900">
+                    href="{{ route('hubin.supervisors.index') }}"
+                    class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition
+                        {{ request()->routeIs('hubin.supervisors.*')
+                            ? 'bg-amber-50 font-semibold text-amber-600'
+                            : 'font-medium text-slate-500 hover:bg-slate-50 hover:text-slate-900' }}">
 
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -365,7 +395,10 @@
                 {{-- Dashboard --}}
                 <a
                     href="{{ route('company.dashboard') }}"
-                    class="mb-1 flex items-center gap-3 rounded-xl bg-amber-50 px-3 py-2.5 text-sm font-semibold text-amber-600">
+                    class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition
+                        {{ request()->routeIs('company.dashboard')
+                            ? 'bg-amber-50 font-semibold text-amber-600'
+                            : 'font-medium text-slate-500 hover:bg-slate-50 hover:text-slate-900' }}">
 
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -391,8 +424,11 @@
 
                 {{-- Applications --}}
                 <a
-                    href="#"
-                    class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-500 transition hover:bg-slate-50 hover:text-slate-900">
+                    href="{{ route('company.applications.index') }}"
+                    class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition
+                        {{ request()->routeIs('company.applications.*')
+                            ? 'bg-amber-50 font-semibold text-amber-600'
+                            : 'font-medium text-slate-500 hover:bg-slate-50 hover:text-slate-900' }}">
 
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -405,7 +441,7 @@
                         <path
                             stroke-linecap="round"
                             stroke-linejoin="round"
-                            d="M9 12h6m-6 4h6m2.25-13.5h-10.5A2.25 2.25 0 0 0 4.5 4.75v14.5a2.25 2.25 0 0 0-2.25-2.25Z" />
+                            d="M9 12h6m-6 4h6m2.25-13.5h-10.5A2.25 2.25 0 0 0 19.5 4.75v14.5a2.25 2.25 0 0 0-2.25-2.25Z" />
 
                     </svg>
 
@@ -418,8 +454,11 @@
 
                 {{-- Accepted Students --}}
                 <a
-                    href="#"
-                    class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-500 transition hover:bg-slate-50 hover:text-slate-900">
+                    href="{{ route('company.accepted-students.index') }}"
+                    class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition
+                        {{ request()->routeIs('company.accepted-students.*')
+                            ? 'bg-amber-50 font-semibold text-amber-600'
+                            : 'font-medium text-slate-500 hover:bg-slate-50 hover:text-slate-900' }}">
 
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -534,7 +573,7 @@
                             <path
                                 stroke-linecap="round"
                                 stroke-linejoin="round"
-                                d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.627 48.627 0 0 1 12 20.904a48.627 48.627 0 0 1 8.23-4.41 60.438 60.438 0 0 0-.491-6.347m-15.48 0a50.12 50.12 0 0 1 15.48 0m-15.48 0A50.119 50.119 0 0 1 12 5.25c3.327 0 6.47.647 9.23 1.81m-15.48 0A50.12 50.12 0 0 0 12 10.5c3.327 0 6.47-.647 9.23-1.81" />
+                                d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.627 48.627 0 0 1 12 20.904a48.627 48.627 0 0 1 8.23-4.41 60.438 60.438 0 0 0-.491-6.347m-15.48 0a50.12 50.12 0 0 1 15.48 0m-15.48 0A50.119 50.119 0 0 1 12 5.25c3.327 0 6.47-.647 9.23-1.81m-15.48 0A50.12 50.12 0 0 0 12 10.5c3.327 0 6.47-.647 9.23-1.81" />
 
                         </svg>
 
