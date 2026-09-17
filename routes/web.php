@@ -69,10 +69,21 @@ Route::middleware(['auth', 'role:student'])->group(function () {
     // Group PKL Application
     Route::get(
         '/student/applications/group',
-        function () {
-            return 'Halaman Pengajuan Kelompok';
-        }
+        [InternshipApplicationController::class, 'createGroup']
     )->name('student.applications.group');
+
+
+    Route::post(
+        '/student/applications/group',
+        [InternshipApplicationController::class, 'storeGroup']
+    )->name('student.applications.group.store');
+
+
+    // Search student for group application
+    Route::get(
+        '/student/students/search',
+        [InternshipApplicationController::class, 'searchStudent']
+    )->name('student.students.search');
 
 
     // Application Status
