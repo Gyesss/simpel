@@ -1,49 +1,90 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('layouts.app')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+@section('title', 'Dashboard Perusahaan')
 
-    <title>Company Dashboard - SIMPEL</title>
+@section('content')
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
+<div>
 
-<body class="min-h-screen bg-slate-50">
+    <div class="mb-8">
 
-    <div class="mx-auto max-w-7xl p-8">
+        <p class="text-sm font-medium text-amber-600">
+            Perusahaan Mitra
+        </p>
 
-        <h1 class="text-3xl font-bold text-slate-900">
-            Company Dashboard
+        <h1 class="mt-1 text-3xl font-bold tracking-tight text-slate-900">
+            Dashboard
         </h1>
 
-        <p class="mt-2 text-slate-500">
-            Welcome, {{ auth()->user()->full_name }}.
+        <p class="mt-2 text-sm text-slate-500">
+            Selamat datang, {{ auth()->user()->full_name }}.
         </p>
-
-        <p class="mt-1 text-sm text-slate-400">
-            Role: {{ auth()->user()->role }}
-        </p>
-
-
-        <form
-            action="{{ route('logout') }}"
-            method="POST"
-            class="mt-8">
-
-            @csrf
-
-            <button
-                type="submit"
-                class="rounded-xl bg-red-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-red-600">
-                Logout
-            </button>
-
-        </form>
 
     </div>
 
-</body>
 
-</html>
+    {{-- Overview --}}
+    <div class="rounded-2xl bg-amber-500 p-6 shadow-sm">
+
+        <p class="text-sm font-medium text-amber-100">
+            SIMPEL
+        </p>
+
+        <h2 class="mt-2 text-2xl font-bold text-white">
+            Kelola penerimaan siswa PKL.
+        </h2>
+
+        <p class="mt-2 max-w-xl text-sm leading-6 text-amber-50">
+            Lihat siswa SMK ICB yang melamar,
+            periksa pengajuan, dan konfirmasi penerimaan siswa PKL.
+        </p>
+
+    </div>
+
+
+    {{-- Stats --}}
+    <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+
+        <div class="rounded-2xl border border-slate-200 bg-white p-5">
+
+            <p class="text-sm text-slate-500">
+                Lamaran Masuk
+            </p>
+
+            <p class="mt-2 text-3xl font-bold text-slate-900">
+                0
+            </p>
+
+        </div>
+
+
+        <div class="rounded-2xl border border-slate-200 bg-white p-5">
+
+            <p class="text-sm text-slate-500">
+                Menunggu Konfirmasi
+            </p>
+
+            <p class="mt-2 text-3xl font-bold text-slate-900">
+                0
+            </p>
+
+        </div>
+
+
+        <div class="rounded-2xl border border-slate-200 bg-white p-5 sm:col-span-2 lg:col-span-1">
+
+            <p class="text-sm text-slate-500">
+                Siswa Diterima
+            </p>
+
+            <p class="mt-2 text-3xl font-bold text-slate-900">
+                0
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+@endsection
