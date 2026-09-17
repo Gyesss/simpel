@@ -17,16 +17,21 @@ class InternshipApplicationController extends Controller
     /**
      * Display the individual internship application form.
      */
-    public function createIndividual()
+    public function createIndividual(Request $request)
     {
         $companies = Company::where('partner_status', 'active')
             ->where('available_quota', '>', 0)
             ->orderBy('company_name')
             ->get();
 
+        $selectedCompanyId = $request->query('company_id');
+
         return view(
             'student.applications.individual',
-            compact('companies')
+            compact(
+                'companies',
+                'selectedCompanyId'
+            )
         );
     }
 
@@ -83,18 +88,113 @@ class InternshipApplicationController extends Controller
 
 
     /**
+     * Display the individual internship application edit form.
+     */
+    public function editIndividual(InternshipApplication $application)
+    {
+        $this->authorizeApplicationEdit($application);
+
+        if ($application->groupMembers()->exists()) {
+            abort(403);
+        }
+
+        $companies = Company::where('partner_status', 'active')
+            ->where(function ($query) use ($application) {
+                $query
+                    ->where('available_quota', '>', 0)
+                    ->orWhere('id', $application->company_id);
+            })
+            ->orderBy('company_name')
+            ->get();
+
+        return view(
+            'student.applications.individual-edit',
+            compact(
+                'application',
+                'companies'
+            )
+        );
+    }
+
+
+    /**
+     * Update an individual internship application.
+     */
+    public function updateIndividual(
+        Request $request,
+        InternshipApplication $application
+    ) {
+        $this->authorizeApplicationEdit($application);
+
+        if ($application->groupMembers()->exists()) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'company_id' => [
+                'required',
+                'exists:companies,id',
+            ],
+
+            'internship_start_date' => [
+                'required',
+                'date',
+            ],
+
+            'internship_end_date' => [
+                'required',
+                'date',
+                'after_or_equal:internship_start_date',
+            ],
+        ]);
+
+
+        $company = Company::where('id', $validated['company_id'])
+            ->where('partner_status', 'active')
+            ->where(function ($query) use ($application) {
+                $query
+                    ->where('available_quota', '>', 0)
+                    ->orWhere('id', $application->company_id);
+            })
+            ->firstOrFail();
+
+
+        $application->update([
+            'company_id' => $company->id,
+            'internship_start_date' =>
+            $validated['internship_start_date'],
+            'internship_end_date' =>
+            $validated['internship_end_date'],
+        ]);
+
+
+        return redirect()
+            ->route('student.application-status')
+            ->with(
+                'success',
+                'Pengajuan PKL berhasil diperbarui.'
+            );
+    }
+
+
+    /**
      * Display the group internship application form.
      */
-    public function createGroup()
+    public function createGroup(Request $request)
     {
         $companies = Company::where('partner_status', 'active')
             ->where('available_quota', '>', 0)
             ->orderBy('company_name')
             ->get();
 
+        $selectedCompanyId = $request->query('company_id');
+
         return view(
             'student.applications.group',
-            compact('companies')
+            compact(
+                'companies',
+                'selectedCompanyId'
+            )
         );
     }
 
@@ -223,6 +323,207 @@ class InternshipApplicationController extends Controller
 
 
     /**
+     * Display the group internship application edit form.
+     */
+    public function editGroup(InternshipApplication $application)
+    {
+        $this->authorizeApplicationEdit($application);
+
+        if (! $application->groupMembers()->exists()) {
+            abort(403);
+        }
+
+        $companies = Company::where('partner_status', 'active')
+            ->where(function ($query) use ($application) {
+                $query
+                    ->where('available_quota', '>', 0)
+                    ->orWhere('id', $application->company_id);
+            })
+            ->orderBy('company_name')
+            ->get();
+
+        $application->load([
+            'groupMembers.student',
+        ]);
+
+        return view(
+            'student.applications.group-edit',
+            compact(
+                'application',
+                'companies'
+            )
+        );
+    }
+
+
+    /**
+     * Update a group internship application.
+     */
+    public function updateGroup(
+        Request $request,
+        InternshipApplication $application
+    ) {
+        $this->authorizeApplicationEdit($application);
+
+        if (! $application->groupMembers()->exists()) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'company_id' => [
+                'required',
+                'exists:companies,id',
+            ],
+
+            'internship_start_date' => [
+                'required',
+                'date',
+            ],
+
+            'internship_end_date' => [
+                'required',
+                'date',
+                'after_or_equal:internship_start_date',
+            ],
+
+            'member_ids' => [
+                'required',
+                'array',
+                'min:1',
+            ],
+
+            'member_ids.*' => [
+                'required',
+                'integer',
+                'distinct',
+                'exists:users,id',
+            ],
+        ]);
+
+
+        $company = Company::where('id', $validated['company_id'])
+            ->where('partner_status', 'active')
+            ->where(function ($query) use ($application) {
+                $query
+                    ->where('available_quota', '>', 0)
+                    ->orWhere('id', $application->company_id);
+            })
+            ->firstOrFail();
+
+
+        $members = User::whereIn(
+            'id',
+            $validated['member_ids']
+        )
+            ->where('role', 'student')
+            ->get();
+
+
+        if ($members->count() !== count($validated['member_ids'])) {
+
+            return back()
+                ->withErrors([
+                    'member_ids' =>
+                    'Semua anggota kelompok harus merupakan siswa.',
+                ])
+                ->withInput();
+        }
+
+
+        if ($members->contains('id', Auth::id())) {
+
+            return back()
+                ->withErrors([
+                    'member_ids' =>
+                    'Ketua kelompok tidak dapat ditambahkan sebagai anggota.',
+                ])
+                ->withInput();
+        }
+
+
+        DB::transaction(function () use (
+            $application,
+            $validated,
+            $company
+        ) {
+            $application->update([
+                'company_id' => $company->id,
+
+                'internship_start_date' =>
+                $validated['internship_start_date'],
+
+                'internship_end_date' =>
+                $validated['internship_end_date'],
+            ]);
+
+
+            $application->groupMembers()->delete();
+
+
+            foreach ($validated['member_ids'] as $studentId) {
+
+                GroupMember::create([
+                    'internship_application_id' =>
+                    $application->id,
+
+                    'student_id' => $studentId,
+                ]);
+            }
+        });
+
+
+        return redirect()
+            ->route('student.application-status')
+            ->with(
+                'success',
+                'Pengajuan PKL kelompok berhasil diperbarui.'
+            );
+    }
+
+
+    /**
+     * Cancel an internship application.
+     */
+    public function cancel(InternshipApplication $application)
+    {
+        $this->authorizeApplicationEdit($application);
+
+        $application->delete();
+
+        return redirect()
+            ->route('student.application-status')
+            ->with(
+                'success',
+                'Pengajuan PKL berhasil dibatalkan.'
+            );
+    }
+
+
+    /**
+     * Authorize the current student to edit or cancel an application.
+     *
+     * Rules:
+     * - The application must still be submitted.
+     * - The current student must be the leader.
+     *
+     * This covers:
+     * - individual applications, where the applicant is the leader;
+     * - group applications, where only the group leader may edit/cancel.
+     */
+    private function authorizeApplicationEdit(
+        InternshipApplication $application
+    ): void {
+        if ($application->status !== 'submitted') {
+            abort(403);
+        }
+
+        if ($application->leader_student_id !== Auth::id()) {
+            abort(403);
+        }
+    }
+
+
+    /**
      * Search student by NIS/NIP.
      */
     public function searchStudent(Request $request)
@@ -273,8 +574,29 @@ class InternshipApplicationController extends Controller
      */
     public function status()
     {
-        $applications = InternshipApplication::with('company')
-            ->where('leader_student_id', Auth::id())
+        $applications = InternshipApplication::with([
+            'company',
+            'leaderStudent',
+            'groupMembers.student',
+        ])
+            ->where(function ($query) {
+
+                $query
+                    ->where(
+                        'leader_student_id',
+                        Auth::id()
+                    )
+                    ->orWhereHas(
+                        'groupMembers',
+                        function ($query) {
+
+                            $query->where(
+                                'student_id',
+                                Auth::id()
+                            );
+                        }
+                    );
+            })
             ->latest('application_date')
             ->get();
 

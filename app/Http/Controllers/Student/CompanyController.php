@@ -12,10 +12,19 @@ class CompanyController extends Controller
      */
     public function index()
     {
-        $companies = Company::where('partner_status', 'active')
+        $companies = Company::orderByRaw("
+                CASE
+                    WHEN partner_status = 'active' AND available_quota > 0 THEN 0
+                    WHEN partner_status = 'active' AND available_quota = 0 THEN 1
+                    ELSE 2
+                END
+            ")
             ->orderBy('company_name')
             ->get();
 
-        return view('student.companies.index', compact('companies'));
+        return view(
+            'student.companies.index',
+            compact('companies')
+        );
     }
 }

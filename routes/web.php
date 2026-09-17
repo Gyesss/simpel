@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Student\DashboardController;
 use App\Http\Controllers\Student\CompanyController;
 use App\Http\Controllers\Student\InternshipApplicationController;
 use Illuminate\Support\Facades\Route;
@@ -37,9 +38,10 @@ Route::post('/logout', [AuthController::class, 'logout'])
 Route::middleware(['auth', 'role:student'])->group(function () {
 
     // Dashboard
-    Route::get('/student/dashboard', function () {
-        return view('student.dashboard');
-    })->name('student.dashboard');
+    Route::get(
+        '/student/dashboard',
+        [DashboardController::class, 'index']
+    )->name('student.dashboard');
 
 
     // Company Catalog
@@ -66,6 +68,19 @@ Route::middleware(['auth', 'role:student'])->group(function () {
     )->name('student.applications.individual.store');
 
 
+    // Edit Individual PKL Application
+    Route::get(
+        '/student/applications/individual/{application}/edit',
+        [InternshipApplicationController::class, 'editIndividual']
+    )->name('student.applications.individual.edit');
+
+
+    Route::put(
+        '/student/applications/individual/{application}',
+        [InternshipApplicationController::class, 'updateIndividual']
+    )->name('student.applications.individual.update');
+
+
     // Group PKL Application
     Route::get(
         '/student/applications/group',
@@ -77,6 +92,26 @@ Route::middleware(['auth', 'role:student'])->group(function () {
         '/student/applications/group',
         [InternshipApplicationController::class, 'storeGroup']
     )->name('student.applications.group.store');
+
+
+    // Edit Group PKL Application
+    Route::get(
+        '/student/applications/group/{application}/edit',
+        [InternshipApplicationController::class, 'editGroup']
+    )->name('student.applications.group.edit');
+
+
+    Route::put(
+        '/student/applications/group/{application}',
+        [InternshipApplicationController::class, 'updateGroup']
+    )->name('student.applications.group.update');
+
+
+    // Cancel PKL Application
+    Route::delete(
+        '/student/applications/{application}',
+        [InternshipApplicationController::class, 'cancel']
+    )->name('student.applications.cancel');
 
 
     // Search student for group application

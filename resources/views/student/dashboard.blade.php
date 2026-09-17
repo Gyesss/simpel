@@ -6,6 +6,7 @@
 
 <div>
 
+    {{-- Header --}}
     <div class="mb-8">
 
         <p class="text-sm font-medium text-amber-600">
@@ -42,43 +43,76 @@
     </div>
 
 
-    {{-- Stats --}}
-    <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    {{-- Application Statistics --}}
+    <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
 
-        <div class="rounded-2xl border border-slate-200 bg-white p-5">
+        {{-- Total --}}
+        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
 
-            <p class="text-sm text-slate-500">
-                Pengajuan Aktif
+            <p class="text-sm font-medium text-slate-500">
+                Total Pengajuan
             </p>
 
             <p class="mt-2 text-3xl font-bold text-slate-900">
-                0
+                {{ $totalApplications }}
+            </p>
+
+            <p class="mt-1 text-sm text-slate-400">
+                Seluruh pengajuan
             </p>
 
         </div>
 
 
-        <div class="rounded-2xl border border-slate-200 bg-white p-5">
+        {{-- Submitted --}}
+        <div class="rounded-2xl border border-amber-200 bg-amber-50 p-5 shadow-sm">
 
-            <p class="text-sm text-slate-500">
-                Status Pengajuan
+            <p class="text-sm font-medium text-amber-700">
+                Menunggu Validasi
             </p>
 
-            <p class="mt-2 text-3xl font-bold text-slate-900">
-                -
+            <p class="mt-2 text-3xl font-bold text-amber-900">
+                {{ $submittedApplications }}
+            </p>
+
+            <p class="mt-1 text-sm text-amber-600">
+                Sedang diproses Hubin
             </p>
 
         </div>
 
 
-        <div class="rounded-2xl border border-slate-200 bg-white p-5 sm:col-span-2 lg:col-span-1">
+        {{-- Approved --}}
+        <div class="rounded-2xl border border-green-200 bg-green-50 p-5 shadow-sm">
 
-            <p class="text-sm text-slate-500">
-                Perusahaan Dipilih
+            <p class="text-sm font-medium text-green-700">
+                Disetujui
             </p>
 
-            <p class="mt-2 text-3xl font-bold text-slate-900">
-                -
+            <p class="mt-2 text-3xl font-bold text-green-900">
+                {{ $approvedApplications }}
+            </p>
+
+            <p class="mt-1 text-sm text-green-600">
+                Pengajuan diterima
+            </p>
+
+        </div>
+
+
+        {{-- Rejected --}}
+        <div class="rounded-2xl border border-red-200 bg-red-50 p-5 shadow-sm">
+
+            <p class="text-sm font-medium text-red-700">
+                Ditolak
+            </p>
+
+            <p class="mt-2 text-3xl font-bold text-red-900">
+                {{ $rejectedApplications }}
+            </p>
+
+            <p class="mt-1 text-sm text-red-600">
+                Pengajuan ditolak
             </p>
 
         </div>
