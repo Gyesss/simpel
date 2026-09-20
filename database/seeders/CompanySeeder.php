@@ -43,5 +43,13 @@ class CompanySeeder extends Seeder
             'available_quota' => 8,
             'partner_status' => 'inactive',
         ]);
+
+        Company::create([
+            'company_name' => 'PT ABC',
+            'full_address' => 'Jl. ABC No. 123, Jakarta',
+            'hr_contact' => '081234567805',
+            'available_quota' => 3,
+            'partner_status' => 'active',
+        ]);
     }
 }

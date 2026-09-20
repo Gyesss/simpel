@@ -120,7 +120,9 @@
                 <label
                     for="company_id"
                     class="text-sm font-semibold text-slate-800">
+
                     Perusahaan Mitra
+
                 </label>
 
                 <p class="mt-1 text-xs leading-5 text-slate-500">
@@ -150,9 +152,13 @@
                         {{ $company->company_name }}
 
                         @if ($company->id === $application->company_id)
+
                         — Perusahaan Saat Ini
+
                         @else
+
                         — {{ $company->available_quota }} kuota tersedia
+
                         @endif
 
                     </option>

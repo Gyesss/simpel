@@ -190,8 +190,6 @@
                     id="members-container"
                     class="mt-5 space-y-4">
 
-                    {{-- Member rows will be inserted here by JavaScript --}}
-
                 </div>
 
 
@@ -240,6 +238,7 @@
                         <select
                             id="company_id"
                             name="company_id"
+                            required
                             class="mt-2 block w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-100">
 
                             <option value="">
@@ -272,6 +271,7 @@
                             type="date"
                             id="internship_start_date"
                             name="internship_start_date"
+                            required
                             class="mt-2 block w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-100">
 
                     </div>
@@ -289,6 +289,7 @@
                             type="date"
                             id="internship_end_date"
                             name="internship_end_date"
+                            required
                             class="mt-2 block w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-100">
 
                     </div>
@@ -373,6 +374,7 @@
 
 
     function updateEmptyState() {
+
         if (membersContainer.children.length === 0) {
 
             emptyMembers.classList.remove('hidden');
@@ -382,6 +384,7 @@
             emptyMembers.classList.add('hidden');
 
         }
+
     }
 
 
@@ -398,10 +401,12 @@
 
 
         return memberIds.includes(String(studentId));
+
     }
 
 
     function createMemberRow() {
+
         const memberId = memberIndex++;
 
         const wrapper = document.createElement('div');
@@ -451,6 +456,7 @@
 
                     <input
                         type="text"
+                        required
                         class="member-nis-nip block w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-100"
                         placeholder="Contoh: 1234567891">
 
@@ -561,10 +567,6 @@
         });
 
 
-        /*
-         * Jika NIS/NIP diubah setelah siswa ditemukan,
-         * hasil siswa sebelumnya tidak lagi dianggap valid.
-         */
         nisInput.addEventListener('input', function() {
 
             memberIdInput.value = '';
@@ -592,6 +594,8 @@
                     'Masukkan NIS/NIP terlebih dahulu.';
 
                 error.classList.remove('hidden');
+
+                nisInput.focus();
 
                 return;
 
@@ -633,10 +637,6 @@
                 }
 
 
-                /*
-                 * Pastikan data yang dikembalikan benar-benar
-                 * berasal dari user dengan role student.
-                 */
                 if (data.role !== 'student') {
 
                     throw new Error(
@@ -646,10 +646,6 @@
                 }
 
 
-                /*
-                 * Cegah siswa yang sama ditambahkan
-                 * pada row yang berbeda.
-                 */
                 if (isMemberAlreadyAdded(data.id, wrapper)) {
 
                     throw new Error(
@@ -697,6 +693,7 @@
 
 
         updateEmptyState();
+
     }
 
 

@@ -46,6 +46,28 @@ class UserSeeder extends Seeder
         ]);
 
         User::create([
+            'login_id' => '1234567893',
+            'nis_nip' => '1234567893',
+            'full_name' => 'Student Demo 4',
+            'class' => 'XI RPL 1',
+            'email' => null,
+            'password' => 'password',
+            'role' => 'student',
+            'phone_number' => '081234567895',
+        ]);
+
+        User::create([
+            'login_id' => '1234567894',
+            'nis_nip' => '1234567894',
+            'full_name' => 'Student Demo 5',
+            'class' => 'XI RPL 1',
+            'email' => null,
+            'password' => 'password',
+            'role' => 'student',
+            'phone_number' => '081234567896',
+        ]);
+
+        User::create([
             'login_id' => 'HUBIN001',
             'nis_nip' => '19800101202601',
             'full_name' => 'Admin Hubin',

@@ -274,23 +274,25 @@
 
                             <p class="mt-1 text-xs text-slate-500">
                                 {{ $member->student->nis_nip }}
+
                                 @if ($member->student->class)
                                 · {{ $member->student->class }}
                                 @endif
+
                             </p>
 
                         </div>
 
 
-<button
-    type="button"
-    data-student-id="{{ $member->student->id }}"
-    onclick="removeMember(this.dataset.studentId)"
-    class="shrink-0 rounded-lg px-3 py-2 text-xs font-semibold text-red-600 transition hover:bg-red-50">
+                        <button
+                            type="button"
+                            data-student-id="{{ $member->student->id }}"
+                            onclick="removeMember(this.dataset.studentId)"
+                            class="shrink-0 rounded-lg px-3 py-2 text-xs font-semibold text-red-600 transition hover:bg-red-50">
 
-    Hapus
+                            Hapus
 
-</button>
+                        </button>
 
 
                         <input
@@ -453,6 +455,8 @@
                 </p>
             `;
 
+            input.focus();
+
             return;
         }
 
@@ -478,9 +482,11 @@
                 const data = await response.json();
 
                 if (!response.ok) {
+
                     throw new Error(
                         data.message || 'Siswa tidak ditemukan.'
                     );
+
                 }
 
                 return data;
@@ -513,11 +519,13 @@
 
                             <p class="mt-1 text-xs text-slate-500">
                                 ${escapeHtml(student.nis_nip)}
+
                                 ${
                                     student.class
                                         ? ` · ${escapeHtml(student.class)}`
                                         : ''
                                 }
+
                             </p>
 
                         </div>
@@ -550,9 +558,12 @@
 
     function addMember(student) {
 
-        const memberList = document.getElementById('member-list');
+        const memberList =
+            document.getElementById('member-list');
 
-        const currentMemberIds = getCurrentMemberIds();
+        const currentMemberIds =
+            getCurrentMemberIds();
+
 
         if (currentMemberIds.includes(Number(student.id))) {
 
@@ -561,12 +572,14 @@
         }
 
 
-        const item = document.createElement('div');
+        const item =
+            document.createElement('div');
 
         item.className =
             'member-item flex items-center justify-between gap-4 rounded-xl border border-slate-200 bg-slate-50 p-4';
 
-        item.dataset.studentId = student.id;
+        item.dataset.studentId =
+            student.id;
 
 
         item.innerHTML = `
@@ -578,12 +591,15 @@
                 </p>
 
                 <p class="mt-1 text-xs text-slate-500">
+
                     ${escapeHtml(student.nis_nip)}
+
                     ${
                         student.class
                             ? ` · ${escapeHtml(student.class)}`
                             : ''
                     }
+
                 </p>
 
             </div>
@@ -612,7 +628,9 @@
 
         document.getElementById('member_nis_nip').value = '';
 
-        const result = document.getElementById('member-result');
+
+        const result =
+            document.getElementById('member-result');
 
         result.classList.add('hidden');
 
@@ -628,7 +646,9 @@
         );
 
         if (item) {
+
             item.remove();
+
         }
 
     }
@@ -636,9 +656,11 @@
 
     function escapeHtml(value) {
 
-        const div = document.createElement('div');
+        const div =
+            document.createElement('div');
 
-        div.textContent = value;
+        div.textContent =
+            value;
 
         return div.innerHTML;
 

@@ -191,6 +191,7 @@
                         <select
                             id="company_id"
                             name="company_id"
+                            required
                             class="mt-2 block w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-100">
 
                             <option value="">
@@ -198,10 +199,12 @@
                             </option>
 
                             @foreach ($companies as $company)
+
                             <option value="{{ $company->id }}">
                                 {{ $company->company_name }}
                                 — {{ $company->available_quota }} kuota tersedia
                             </option>
+
                             @endforeach
 
                         </select>
@@ -224,6 +227,7 @@
                             type="date"
                             id="internship_start_date"
                             name="internship_start_date"
+                            required
                             class="mt-2 block w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-100">
 
                     </div>
@@ -244,6 +248,7 @@
                             type="date"
                             id="internship_end_date"
                             name="internship_end_date"
+                            required
                             class="mt-2 block w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-100">
 
                     </div>
