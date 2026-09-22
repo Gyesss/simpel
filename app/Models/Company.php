@@ -23,6 +23,14 @@ class Company extends Model
     ];
 
     /**
+     * Get the users associated with this company.
+     */
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
+
+    /**
      * Get the internship applications submitted to this company.
      */
     public function internshipApplications()

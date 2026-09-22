@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Company;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -20,6 +21,7 @@ class UserSeeder extends Seeder
             'email' => null,
             'password' => 'password',
             'role' => 'student',
+            'company_id' => null,
             'phone_number' => '081234567890',
         ]);
 
@@ -31,6 +33,7 @@ class UserSeeder extends Seeder
             'email' => null,
             'password' => 'password',
             'role' => 'student',
+            'company_id' => null,
             'phone_number' => '081234567893',
         ]);
 
@@ -42,6 +45,7 @@ class UserSeeder extends Seeder
             'email' => null,
             'password' => 'password',
             'role' => 'student',
+            'company_id' => null,
             'phone_number' => '081234567894',
         ]);
 
@@ -53,6 +57,7 @@ class UserSeeder extends Seeder
             'email' => null,
             'password' => 'password',
             'role' => 'student',
+            'company_id' => null,
             'phone_number' => '081234567895',
         ]);
 
@@ -64,6 +69,7 @@ class UserSeeder extends Seeder
             'email' => null,
             'password' => 'password',
             'role' => 'student',
+            'company_id' => null,
             'phone_number' => '081234567896',
         ]);
 
@@ -75,6 +81,7 @@ class UserSeeder extends Seeder
             'email' => null,
             'password' => 'password',
             'role' => 'hubin',
+            'company_id' => null,
             'phone_number' => '081234567891',
         ]);
 
@@ -86,6 +93,10 @@ class UserSeeder extends Seeder
             'email' => null,
             'password' => 'password',
             'role' => 'company',
+            'company_id' => Company::where(
+                'company_name',
+                'PT Teknologi Nusantara'
+            )->value('id'),
             'phone_number' => '081234567892',
         ]);
     }
