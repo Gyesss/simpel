@@ -690,14 +690,20 @@ class InternshipApplicationController extends Controller
             ]);
         });
 
+        /*
+        |--------------------------------------------------------------------------
+        | Important:
+        |--------------------------------------------------------------------------
+        | The old leader is no longer authorized to edit this application.
+        | Therefore, redirect directly to the application status page.
+        |--------------------------------------------------------------------------
+        */
+
         return redirect()
-            ->route(
-                'student.applications.group.edit',
-                $application
-            )
+            ->route('student.application-status')
             ->with(
                 'success',
-                'Ketua kelompok berhasil dipindahkan.'
+                'Ketua kelompok berhasil dipindahkan. Anda sekarang menjadi anggota biasa dan tidak lagi memiliki hak untuk menyunting pengajuan ini.'
             );
     }
 
@@ -777,7 +783,16 @@ class InternshipApplicationController extends Controller
                         }
                     );
             })
+            ->orderByRaw("
+                CASE status
+                    WHEN 'submitted' THEN 1
+                    WHEN 'approved' THEN 2
+                    WHEN 'rejected' THEN 3
+                    ELSE 4
+                END
+            ")
             ->latest('application_date')
+            ->latest('created_at')
             ->get();
 
         return view(
