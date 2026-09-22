@@ -126,7 +126,8 @@
                 </label>
 
                 <p class="mt-1 text-xs leading-5 text-slate-500">
-                    Pilih perusahaan mitra yang masih aktif dan memiliki kuota.
+                    Pilih perusahaan mitra yang masih aktif. Pengajuan tetap dapat
+                    dilakukan meskipun jumlah peserta melebihi kuota perusahaan.
                 </p>
 
                 <select
@@ -143,6 +144,7 @@
 
                     <option
                         value="{{ $company->id }}"
+                        data-quota="{{ $company->available_quota }}"
                         @selected(
                         old( 'company_id' ,
                         $application->company_id
@@ -150,14 +152,11 @@
                         )>
 
                         {{ $company->company_name }}
+                        — {{ $company->available_quota }} kuota tersedia
 
                         @if ($company->id === $application->company_id)
 
                         — Perusahaan Saat Ini
-
-                        @else
-
-                        — {{ $company->available_quota }} kuota tersedia
 
                         @endif
 
@@ -166,6 +165,50 @@
                     @endforeach
 
                 </select>
+
+
+                {{-- Quota Warning --}}
+                <div
+                    id="quota-warning"
+                    class="mt-3 hidden rounded-xl border border-amber-200 bg-amber-50 p-4">
+
+                    <div class="flex gap-3">
+
+                        <div class="mt-0.5 shrink-0 text-amber-600">
+
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.8"
+                                stroke="currentColor"
+                                class="h-5 w-5">
+
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M12 9v3.75m0 3.75h.007v.007H12v-.007ZM10.34 3.94 2.82 17.25a1.875 1.875 0 0 0 1.63 2.813h15.1a1.875 1.875 0 0 0 1.63-2.813L13.66 3.94a1.875 1.875 0 0 0-3.32 0Z" />
+
+                            </svg>
+
+                        </div>
+
+                        <div>
+
+                            <p class="text-sm font-semibold text-amber-800">
+                                Kuota perusahaan tidak mencukupi
+                            </p>
+
+                            <p
+                                id="quota-warning-text"
+                                class="mt-1 text-sm leading-6 text-amber-700">
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
 
             </div>
 
@@ -269,7 +312,9 @@
 
                         <p class="mt-1 text-sm leading-6 text-amber-700">
                             Perubahan hanya dapat dilakukan selama pengajuan
-                            masih menunggu validasi Hubin.
+                            masih menunggu validasi Hubin. Jika kuota perusahaan
+                            tidak mencukupi, pengajuan tetap dapat disimpan dan
+                            akan menjadi bahan pertimbangan Hubin serta perusahaan.
                         </p>
 
                     </div>
@@ -305,5 +350,85 @@
     </form>
 
 </div>
+
+
+<script>
+    const companySelect =
+        document.getElementById('company_id');
+
+    const quotaWarning =
+        document.getElementById('quota-warning');
+
+    const quotaWarningText =
+        document.getElementById('quota-warning-text');
+
+
+    function updateQuotaWarning() {
+
+        const selectedOption =
+            companySelect.options[
+                companySelect.selectedIndex
+            ];
+
+
+        if (
+            !selectedOption ||
+            !selectedOption.value
+        ) {
+
+            quotaWarning.classList.add('hidden');
+
+            quotaWarningText.textContent = '';
+
+            return;
+
+        }
+
+
+        const quota =
+            Number(
+                selectedOption.dataset.quota
+            );
+
+
+        /*
+         * An individual application requires
+         * capacity for one student.
+         */
+
+        const requiredQuota = 1;
+
+
+        if (quota < requiredQuota) {
+
+            quotaWarning.classList.remove('hidden');
+
+            quotaWarningText.textContent =
+                `Perusahaan saat ini memiliki ${quota} kuota tersedia, sedangkan pengajuan ini membutuhkan kapasitas untuk 1 siswa. Pengajuan tetap dapat disimpan, tetapi penerimaan tetap bergantung pada keputusan Hubin dan perusahaan.`;
+
+        } else {
+
+            quotaWarning.classList.add('hidden');
+
+            quotaWarningText.textContent = '';
+
+        }
+
+    }
+
+
+    companySelect.addEventListener(
+        'change',
+        updateQuotaWarning
+    );
+
+
+    /*
+     * Check the currently selected company
+     * immediately when the page loads.
+     */
+
+    updateQuotaWarning();
+</script>
 
 @endsection

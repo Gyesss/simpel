@@ -61,7 +61,6 @@ Route::middleware(['auth', 'role:student'])->group(function () {
         [InternshipApplicationController::class, 'createIndividual']
     )->name('student.applications.individual');
 
-
     Route::post(
         '/student/applications/individual',
         [InternshipApplicationController::class, 'storeIndividual']
@@ -73,7 +72,6 @@ Route::middleware(['auth', 'role:student'])->group(function () {
         '/student/applications/individual/{application}/edit',
         [InternshipApplicationController::class, 'editIndividual']
     )->name('student.applications.individual.edit');
-
 
     Route::put(
         '/student/applications/individual/{application}',
@@ -87,7 +85,6 @@ Route::middleware(['auth', 'role:student'])->group(function () {
         [InternshipApplicationController::class, 'createGroup']
     )->name('student.applications.group');
 
-
     Route::post(
         '/student/applications/group',
         [InternshipApplicationController::class, 'storeGroup']
@@ -100,7 +97,6 @@ Route::middleware(['auth', 'role:student'])->group(function () {
         [InternshipApplicationController::class, 'editGroup']
     )->name('student.applications.group.edit');
 
-
     Route::put(
         '/student/applications/group/{application}',
         [InternshipApplicationController::class, 'updateGroup']
@@ -112,6 +108,20 @@ Route::middleware(['auth', 'role:student'])->group(function () {
         '/student/applications/{application}',
         [InternshipApplicationController::class, 'cancel']
     )->name('student.applications.cancel');
+
+
+    // Withdraw from Group PKL Application
+    Route::delete(
+        '/student/applications/group/{application}/withdraw',
+        [InternshipApplicationController::class, 'withdrawFromGroup']
+    )->name('student.applications.group.withdraw');
+
+
+    // Transfer Group Leader
+    Route::patch(
+        '/student/applications/group/{application}/transfer-leader',
+        [InternshipApplicationController::class, 'transferLeader']
+    )->name('student.applications.group.transfer-leader');
 
 
     // Search student for group application

@@ -104,14 +104,13 @@
     </div>
 
 
-    {{-- Edit Form --}}
+    {{-- Main Edit Form --}}
     <form
         action="{{ route('student.applications.group.update', $application) }}"
         method="POST">
 
         @csrf
         @method('PUT')
-
 
         <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
 
@@ -127,7 +126,8 @@
                 </label>
 
                 <p class="mt-1 text-xs leading-5 text-slate-500">
-                    Pilih perusahaan mitra yang masih aktif dan memiliki kuota.
+                    Pilih perusahaan mitra yang masih aktif. Pengajuan tetap dapat
+                    dilakukan meskipun jumlah peserta melebihi kuota perusahaan.
                 </p>
 
                 <select
@@ -144,6 +144,7 @@
 
                     <option
                         value="{{ $company->id }}"
+                        data-quota="{{ $company->available_quota }}"
                         @selected(
                         old( 'company_id' ,
                         $application->company_id
@@ -151,14 +152,11 @@
                         )>
 
                         {{ $company->company_name }}
+                        — {{ $company->available_quota }} kuota tersedia
 
                         @if ($company->id === $application->company_id)
 
                         — Perusahaan Saat Ini
-
-                        @else
-
-                        — {{ $company->available_quota }} kuota tersedia
 
                         @endif
 
@@ -167,6 +165,50 @@
                     @endforeach
 
                 </select>
+
+
+                {{-- Quota Warning --}}
+                <div
+                    id="quota-warning"
+                    class="mt-3 hidden rounded-xl border border-amber-200 bg-amber-50 p-4">
+
+                    <div class="flex gap-3">
+
+                        <div class="mt-0.5 shrink-0 text-amber-600">
+
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.8"
+                                stroke="currentColor"
+                                class="h-5 w-5">
+
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M12 9v3.75m0 3.75h.007v.007H12v-.007ZM10.34 3.94 2.82 17.25a1.875 1.875 0 0 0 1.63 2.813h15.1a1.875 1.875 0 0 0 1.63-2.813L13.66 3.94a1.875 1.875 0 0 0-3.32 0Z" />
+
+                            </svg>
+
+                        </div>
+
+                        <div>
+
+                            <p class="text-sm font-semibold text-amber-800">
+                                Jumlah peserta melebihi kuota perusahaan
+                            </p>
+
+                            <p
+                                id="quota-warning-text"
+                                class="mt-1 text-sm leading-6 text-amber-700">
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
 
             </div>
 
@@ -273,10 +315,13 @@
                             </p>
 
                             <p class="mt-1 text-xs text-slate-500">
+
                                 {{ $member->student->nis_nip }}
 
                                 @if ($member->student->class)
+
                                 · {{ $member->student->class }}
+
                                 @endif
 
                             </p>
@@ -320,6 +365,7 @@
 
                     <p class="mt-1 text-xs leading-5 text-slate-500">
                         Masukkan NIS/NIP siswa yang ingin ditambahkan.
+                        Penambahan anggota bersifat opsional.
                     </p>
 
 
@@ -348,7 +394,6 @@
                     <div
                         id="member-result"
                         class="mt-3 hidden rounded-xl border border-slate-200 bg-white p-4">
-
                     </div>
 
                 </div>
@@ -388,7 +433,10 @@
 
                         <p class="mt-1 text-sm leading-6 text-amber-700">
                             Perubahan hanya dapat dilakukan selama pengajuan
-                            masih menunggu validasi Hubin.
+                            masih menunggu validasi Hubin. Jika jumlah peserta
+                            melebihi kuota perusahaan, pengajuan tetap dapat
+                            disimpan dan akan menjadi bahan pertimbangan Hubin
+                            serta perusahaan.
                         </p>
 
                     </div>
@@ -423,30 +471,158 @@
 
     </form>
 
+
+    {{-- Transfer Leader Form --}}
+    @if ($application->groupMembers->isNotEmpty())
+
+    <div class="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-4">
+
+        <div>
+
+            <p class="text-sm font-semibold text-slate-800">
+                Pindahkan Ketua Kelompok
+            </p>
+
+            <p class="mt-1 text-xs leading-5 text-slate-500">
+                Pilih salah satu anggota kelompok untuk menjadi ketua baru.
+                Setelah dipindahkan, Anda akan menjadi anggota biasa.
+            </p>
+
+        </div>
+
+
+        <form
+            action="{{ route('student.applications.group.transfer-leader', $application) }}"
+            method="POST"
+            class="mt-4">
+
+            @csrf
+            @method('PATCH')
+
+            <div class="flex flex-col gap-3 sm:flex-row">
+
+                <select
+                    name="new_leader_id"
+                    required
+                    class="min-w-0 flex-1 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-amber-400 focus:ring-2 focus:ring-amber-100">
+
+                    <option value="">
+                        Pilih anggota sebagai ketua baru
+                    </option>
+
+                    @foreach ($application->groupMembers as $member)
+
+                    <option value="{{ $member->student->id }}">
+                        {{ $member->student->full_name }}
+                        — {{ $member->student->nis_nip }}
+                    </option>
+
+                    @endforeach
+
+                </select>
+
+
+                <button
+                    type="submit"
+                    onclick="return confirm('Apakah Anda yakin ingin memindahkan ketua kelompok? Setelah dilanjutkan, Anda akan menjadi anggota biasa dan tidak lagi memiliki hak untuk menyunting pengajuan ini.');"
+                    class="rounded-xl border border-amber-500 bg-white px-5 py-3 text-sm font-semibold text-amber-600 transition hover:bg-amber-50">
+
+                    Pindahkan Ketua
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+    @endif
+
 </div>
 
 
 <script>
     function getCurrentMemberIds() {
-
         return Array.from(
             document.querySelectorAll(
                 '#member-list input[name="member_ids[]"]'
             )
         ).map(input => Number(input.value));
+    }
 
+
+    function getTotalStudents() {
+        /*
+         * The leader is not stored in group_members.
+         * Therefore:
+         *
+         * total students = members + 1 leader
+         */
+
+        return getCurrentMemberIds().length + 1;
+    }
+
+
+    function updateQuotaWarning() {
+        const companySelect =
+            document.getElementById('company_id');
+
+        const warning =
+            document.getElementById('quota-warning');
+
+        const warningText =
+            document.getElementById('quota-warning-text');
+
+        const selectedOption =
+            companySelect.options[
+                companySelect.selectedIndex
+            ];
+
+        if (
+            !selectedOption ||
+            !selectedOption.value
+        ) {
+            warning.classList.add('hidden');
+            warningText.textContent = '';
+
+            return;
+        }
+
+        const quota =
+            Number(
+                selectedOption.dataset.quota
+            );
+
+        const totalStudents =
+            getTotalStudents();
+
+        if (totalStudents > quota) {
+            const excess =
+                totalStudents - quota;
+
+            warning.classList.remove('hidden');
+
+            warningText.textContent =
+                `Kelompok saat ini terdiri dari ${totalStudents} siswa, sedangkan kuota perusahaan adalah ${quota} siswa. Jumlah peserta melebihi kuota sebanyak ${excess} siswa. Pengajuan tetap dapat diproses, tetapi penerimaan tetap bergantung pada keputusan Hubin dan perusahaan.`;
+        } else {
+            warning.classList.add('hidden');
+            warningText.textContent = '';
+        }
     }
 
 
     function searchMember() {
+        const input =
+            document.getElementById('member_nis_nip');
 
-        const input = document.getElementById('member_nis_nip');
-        const result = document.getElementById('member-result');
+        const result =
+            document.getElementById('member-result');
 
-        const nisNip = input.value.trim();
+        const nisNip =
+            input.value.trim();
 
         if (!nisNip) {
-
             result.classList.remove('hidden');
 
             result.innerHTML = `
@@ -460,7 +636,6 @@
             return;
         }
 
-
         result.classList.remove('hidden');
 
         result.innerHTML = `
@@ -468,7 +643,6 @@
                 Mencari data siswa...
             </p>
         `;
-
 
         fetch(
                 `{{ route('student.students.search') }}?nis_nip=${encodeURIComponent(nisNip)}`, {
@@ -478,26 +652,27 @@
                 }
             )
             .then(async response => {
-
-                const data = await response.json();
+                const data =
+                    await response.json();
 
                 if (!response.ok) {
-
                     throw new Error(
-                        data.message || 'Siswa tidak ditemukan.'
+                        data.message ||
+                        'Siswa tidak ditemukan.'
                     );
-
                 }
 
                 return data;
-
             })
             .then(student => {
+                const currentMemberIds =
+                    getCurrentMemberIds();
 
-                const currentMemberIds = getCurrentMemberIds();
-
-                if (currentMemberIds.includes(Number(student.id))) {
-
+                if (
+                    currentMemberIds.includes(
+                        Number(student.id)
+                    )
+                ) {
                     result.innerHTML = `
                         <p class="text-sm text-amber-700">
                             Siswa tersebut sudah menjadi anggota kelompok.
@@ -506,7 +681,6 @@
 
                     return;
                 }
-
 
                 result.innerHTML = `
                     <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -518,6 +692,7 @@
                             </p>
 
                             <p class="mt-1 text-xs text-slate-500">
+
                                 ${escapeHtml(student.nis_nip)}
 
                                 ${
@@ -530,6 +705,7 @@
 
                         </div>
 
+
                         <button
                             type="button"
                             onclick='addMember(${JSON.stringify(student)})'
@@ -541,36 +717,31 @@
 
                     </div>
                 `;
-
             })
             .catch(error => {
-
                 result.innerHTML = `
                     <p class="text-sm text-red-600">
                         ${escapeHtml(error.message)}
                     </p>
                 `;
-
             });
-
     }
 
 
     function addMember(student) {
-
         const memberList =
             document.getElementById('member-list');
 
         const currentMemberIds =
             getCurrentMemberIds();
 
-
-        if (currentMemberIds.includes(Number(student.id))) {
-
+        if (
+            currentMemberIds.includes(
+                Number(student.id)
+            )
+        ) {
             return;
-
         }
-
 
         const item =
             document.createElement('div');
@@ -581,9 +752,7 @@
         item.dataset.studentId =
             student.id;
 
-
         item.innerHTML = `
-
             <div class="min-w-0">
 
                 <p class="truncate text-sm font-semibold text-slate-800">
@@ -607,7 +776,8 @@
 
             <button
                 type="button"
-                onclick="removeMember(${student.id})"
+                data-student-id="${student.id}"
+                onclick="removeMember(this.dataset.studentId)"
                 class="shrink-0 rounded-lg px-3 py-2 text-xs font-semibold text-red-600 transition hover:bg-red-50">
 
                 Hapus
@@ -619,43 +789,41 @@
                 type="hidden"
                 name="member_ids[]"
                 value="${student.id}">
-
         `;
-
 
         memberList.appendChild(item);
 
-
-        document.getElementById('member_nis_nip').value = '';
-
+        document.getElementById(
+            'member_nis_nip'
+        ).value = '';
 
         const result =
-            document.getElementById('member-result');
+            document.getElementById(
+                'member-result'
+            );
 
         result.classList.add('hidden');
-
         result.innerHTML = '';
 
+        updateQuotaWarning();
     }
 
 
     function removeMember(studentId) {
-
-        const item = document.querySelector(
-            `.member-item[data-student-id="${studentId}"]`
-        );
+        const item =
+            document.querySelector(
+                `.member-item[data-student-id="${studentId}"]`
+            );
 
         if (item) {
-
             item.remove();
-
         }
 
+        updateQuotaWarning();
     }
 
 
     function escapeHtml(value) {
-
         const div =
             document.createElement('div');
 
@@ -663,23 +831,36 @@
             value;
 
         return div.innerHTML;
-
     }
 
 
     document
         .getElementById('member_nis_nip')
-        .addEventListener('keydown', function(event) {
-
-            if (event.key === 'Enter') {
-
-                event.preventDefault();
-
-                searchMember();
-
+        .addEventListener(
+            'keydown',
+            function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    searchMember();
+                }
             }
+        );
 
-        });
+
+    document
+        .getElementById('company_id')
+        .addEventListener(
+            'change',
+            updateQuotaWarning
+        );
+
+
+    /*
+     * Show the correct quota warning immediately
+     * when the page is loaded.
+     */
+
+    updateQuotaWarning();
 </script>
 
 @endsection

@@ -143,9 +143,12 @@
                 </h2>
 
                 <p class="mt-1 text-sm leading-6 text-amber-800">
-                    Pastikan perusahaan yang dipilih masih memiliki
-                    kuota tersedia. Pengajuan akan diperiksa dan
-                    divalidasi oleh Hubin sebelum mendapatkan surat
+                    Pilih perusahaan mitra yang masih aktif.
+                    Informasi kuota digunakan sebagai bahan pertimbangan
+                    dalam proses penempatan PKL, tetapi kekurangan kuota
+                    tidak secara otomatis menghalangi pengajuan.
+                    Pengajuan akan diperiksa dan divalidasi oleh Hubin
+                    bersama perusahaan sebelum mendapatkan surat
                     pengantar PKL.
                 </p>
 

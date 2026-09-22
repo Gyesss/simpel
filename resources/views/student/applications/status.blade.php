@@ -69,6 +69,26 @@
 
         @foreach ($applications as $application)
 
+        @php
+        $isLeader = $application->leader_student_id === auth()->id();
+
+        $isGroup = $application->groupMembers->isNotEmpty();
+
+        $isMember = $isGroup &&
+        $application->groupMembers->contains(
+        'student_id',
+        auth()->id()
+        );
+
+        $totalStudents = $isGroup
+        ? $application->groupMembers->count() + 1
+        : 1;
+
+        $availableQuota = $application->company->available_quota;
+
+        $quotaExceeded = $totalStudents > $availableQuota;
+        @endphp
+
         <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
 
             {{-- Application Header --}}
@@ -119,10 +139,10 @@
                     {{-- Leader Actions --}}
                     @if (
                     $application->status === 'submitted' &&
-                    $application->leader_student_id === auth()->id()
+                    $isLeader
                     )
 
-                    @if ($application->groupMembers->isNotEmpty())
+                    @if ($isGroup)
 
                     <a
                         href="{{ route('student.applications.group.edit', $application) }}"
@@ -175,6 +195,7 @@
                     @endif
 
 
+                    {{-- Cancel Application --}}
                     <form
                         action="{{ route('student.applications.cancel', $application) }}"
                         method="POST"
@@ -208,6 +229,46 @@
 
                     </form>
 
+                    {{-- Group Member Actions --}}
+                    @elseif (
+                    $application->status === 'submitted' &&
+                    $isMember &&
+                    ! $isLeader
+                    )
+
+                    <form
+                        action="{{ route('student.applications.group.withdraw', $application) }}"
+                        method="POST"
+                        onsubmit="return confirm('Anda akan mengundurkan diri dari kelompok ini. Pengajuan kelompok akan dibatalkan seluruhnya dan kelompok yang tersisa harus membuat pengajuan baru. Apakah Anda yakin ingin melanjutkan?');">
+
+                        @csrf
+                        @method('DELETE')
+
+                        <button
+                            type="submit"
+                            class="inline-flex items-center gap-1.5 rounded-lg border border-red-200 bg-white px-3 py-1.5 text-xs font-semibold text-red-600 transition hover:bg-red-50">
+
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.8"
+                                stroke="currentColor"
+                                class="h-4 w-4">
+
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M6 18 18 6M6 6l12 12" />
+
+                            </svg>
+
+                            Undurkan Diri
+
+                        </button>
+
+                    </form>
+
                     @endif
 
                 </div>
@@ -233,8 +294,60 @@
             </div>
 
 
+            {{-- Quota Warning --}}
+            @if ($quotaExceeded)
+
+            <div class="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-4">
+
+                <div class="flex gap-3">
+
+                    <div class="mt-0.5 shrink-0 text-amber-600">
+
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.8"
+                            stroke="currentColor"
+                            class="h-5 w-5">
+
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M12 9v3.75m0 3.75h.007v.008H12v-.008ZM10.34 3.94 2.82 17.25a1.875 1.875 0 0 0 1.63 2.813h15.1a1.875 1.875 0 0 0 1.63-2.813L13.66 3.94a1.875 1.875 0 0 0-3.32 0Z" />
+
+                        </svg>
+
+                    </div>
+
+                    <div>
+
+                        <p class="text-sm font-semibold text-amber-800">
+                            Jumlah peserta melebihi kuota perusahaan
+                        </p>
+
+                        <p class="mt-1 text-sm leading-6 text-amber-700">
+                            Pengajuan ini mencakup
+                            {{ $totalStudents }} siswa,
+                            sedangkan kuota yang tersedia saat ini
+                            adalah
+                            {{ $availableQuota }} siswa.
+                            Pengajuan tetap dapat diproses, tetapi
+                            keputusan penerimaan berada pada pihak
+                            Hubin dan perusahaan.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            @endif
+
+
             {{-- Group Members --}}
-            @if ($application->groupMembers->isNotEmpty())
+            @if ($isGroup)
 
             <div class="mt-5 rounded-xl border border-slate-200 bg-white p-4">
 
@@ -253,7 +366,7 @@
                     </div>
 
                     <span class="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
-                        {{ $application->groupMembers->count() + 1 }} siswa
+                        {{ $totalStudents }} siswa
                     </span>
 
                 </div>
@@ -277,7 +390,7 @@
                                 <path
                                     stroke-linecap="round"
                                     stroke-linejoin="round"
-                                    d="M15.75 6.75a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.5 20.25a7.5 7.5 0 0 1 15 0" />
+                                    d="M15.75 6.75a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1-7.5 0ZM4.5 20.25a7.5 7.5 0 0 1 15 0" />
 
                             </svg>
 
@@ -331,7 +444,7 @@
                                 <path
                                     stroke-linecap="round"
                                     stroke-linejoin="round"
-                                    d="M15.75 6.75a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0 3.75 3.75 0 0 1 0 0ZM4.5 20.25a7.5 7.5 0 0 1 15 0" />
+                                    d="M15.75 6.75a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1-7.5 0 3.75 3.75 0 0 1 0 0ZM4.5 20.25a7.5 7.5 0 0 1 15 0" />
 
                             </svg>
 
@@ -464,6 +577,23 @@
                                     stroke-linecap="round"
                                     stroke-linejoin="round"
                                     d="m5 12 4 4L19 6" />
+
+                            </svg>
+
+                            @elseif ($application->status === 'rejected')
+
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="2"
+                                stroke="currentColor"
+                                class="h-4 w-4">
+
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M6 18 18 6M6 6l12 12" />
 
                             </svg>
 

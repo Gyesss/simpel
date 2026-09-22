@@ -51,7 +51,9 @@
     {{-- Application Form --}}
     <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
 
-        <form method="POST">
+        <form
+            method="POST"
+            action="{{ route('student.applications.group.store') }}">
 
             @csrf
 
@@ -71,10 +73,13 @@
                 <div class="mt-5 grid gap-5 md:grid-cols-2">
 
                     <div>
+
                         <label
                             for="leader_full_name"
                             class="block text-sm font-medium text-slate-700">
+
                             Nama Lengkap
+
                         </label>
 
                         <input
@@ -83,14 +88,18 @@
                             value="{{ auth()->user()->full_name }}"
                             readonly
                             class="mt-2 block w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-600 outline-none">
+
                     </div>
 
 
                     <div>
+
                         <label
                             for="leader_nis_nip"
                             class="block text-sm font-medium text-slate-700">
+
                             NIS/NIP
+
                         </label>
 
                         <input
@@ -99,14 +108,18 @@
                             value="{{ auth()->user()->nis_nip }}"
                             readonly
                             class="mt-2 block w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-600 outline-none">
+
                     </div>
 
 
                     <div>
+
                         <label
                             for="leader_class"
                             class="block text-sm font-medium text-slate-700">
+
                             Kelas
+
                         </label>
 
                         <input
@@ -115,14 +128,18 @@
                             value="{{ auth()->user()->class }}"
                             readonly
                             class="mt-2 block w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-600 outline-none">
+
                     </div>
 
 
                     <div>
+
                         <label
                             for="leader_phone_number"
                             class="block text-sm font-medium text-slate-700">
+
                             Nomor HP
+
                         </label>
 
                         <input
@@ -131,6 +148,7 @@
                             value="{{ auth()->user()->phone_number }}"
                             readonly
                             class="mt-2 block w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-600 outline-none">
+
                     </div>
 
                 </div>
@@ -154,6 +172,7 @@
 
                         <p class="mt-1 text-sm leading-6 text-slate-500">
                             Masukkan NIS/NIP siswa untuk menambahkan anggota kelompok.
+                            Jumlah anggota tidak dibatasi oleh sistem.
                         </p>
 
                     </div>
@@ -189,7 +208,6 @@
                 <div
                     id="members-container"
                     class="mt-5 space-y-4">
-
                 </div>
 
 
@@ -232,7 +250,9 @@
                         <label
                             for="company_id"
                             class="block text-sm font-medium text-slate-700">
+
                             Perusahaan Mitra
+
                         </label>
 
                         <select
@@ -247,14 +267,65 @@
 
                             @foreach ($companies as $company)
 
-                            <option value="{{ $company->id }}">
+                            <option
+                                value="{{ $company->id }}"
+                                data-quota="{{ $company->available_quota }}"
+                                @selected(
+                                old('company_id')==$company->id
+                                )>
+
                                 {{ $company->company_name }}
                                 — {{ $company->available_quota }} kuota tersedia
+
                             </option>
 
                             @endforeach
 
                         </select>
+
+
+                        {{-- Quota Warning --}}
+                        <div
+                            id="quota-warning"
+                            class="mt-3 hidden rounded-xl border border-amber-200 bg-amber-50 p-4">
+
+                            <div class="flex gap-3">
+
+                                <div class="mt-0.5 shrink-0 text-amber-600">
+
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke-width="1.8"
+                                        stroke="currentColor"
+                                        class="h-5 w-5">
+
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M12 9v3.75m0 3.75h.007v.007H12v-.007ZM10.34 3.94 2.82 17.25a1.875 1.875 0 0 0 1.63 2.813h15.1a1.875 1.875 0 0 0 1.63-2.813L13.66 3.94a1.875 1.875 0 0 0-3.32 0Z" />
+
+                                    </svg>
+
+                                </div>
+
+                                <div>
+
+                                    <p class="text-sm font-semibold text-amber-800">
+                                        Kuota perusahaan tidak mencukupi
+                                    </p>
+
+                                    <p
+                                        id="quota-warning-text"
+                                        class="mt-1 text-sm leading-6 text-amber-700">
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
 
                     </div>
 
@@ -264,13 +335,16 @@
                         <label
                             for="internship_start_date"
                             class="block text-sm font-medium text-slate-700">
+
                             Tanggal Mulai PKL
+
                         </label>
 
                         <input
                             type="date"
                             id="internship_start_date"
                             name="internship_start_date"
+                            value="{{ old('internship_start_date') }}"
                             required
                             class="mt-2 block w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-100">
 
@@ -282,13 +356,16 @@
                         <label
                             for="internship_end_date"
                             class="block text-sm font-medium text-slate-700">
+
                             Tanggal Selesai PKL
+
                         </label>
 
                         <input
                             type="date"
                             id="internship_end_date"
                             name="internship_end_date"
+                            value="{{ old('internship_end_date') }}"
                             required
                             class="mt-2 block w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-100">
 
@@ -323,10 +400,23 @@
 
                     </div>
 
-                    <p class="text-sm leading-6 text-amber-800">
-                        Pastikan seluruh anggota kelompok sudah menyetujui
-                        perusahaan dan periode PKL yang dipilih.
-                    </p>
+                    <div>
+
+                        <p class="text-sm font-semibold text-amber-900">
+                            Perhatikan sebelum mengajukan
+                        </p>
+
+                        <p class="mt-1 text-sm leading-6 text-amber-800">
+                            Pastikan seluruh anggota kelompok sudah menyetujui
+                            perusahaan dan periode PKL yang dipilih.
+                            Jumlah anggota kelompok tidak dibatasi oleh sistem.
+                            Jika jumlah peserta melebihi kuota perusahaan,
+                            pengajuan tetap dapat dikirim dan akan menjadi
+                            bahan pertimbangan dalam proses validasi Hubin
+                            dan perusahaan.
+                        </p>
+
+                    </div>
 
                 </div>
 
@@ -339,14 +429,18 @@
                 <a
                     href="{{ route('student.applications.index') }}"
                     class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50">
+
                     Batal
+
                 </a>
 
 
                 <button
                     type="submit"
                     class="inline-flex items-center justify-center rounded-xl bg-amber-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-amber-600">
+
                     Ajukan PKL
+
                 </button>
 
             </div>
@@ -368,7 +462,17 @@
     const emptyMembers =
         document.getElementById('empty-members');
 
-    const leaderNisNip = "{{ auth()->user()->nis_nip }}";
+    const companySelect =
+        document.getElementById('company_id');
+
+    const quotaWarning =
+        document.getElementById('quota-warning');
+
+    const quotaWarningText =
+        document.getElementById('quota-warning-text');
+
+    const leaderNisNip =
+        "{{ auth()->user()->nis_nip }}";
 
     let memberIndex = 0;
 
@@ -388,9 +492,68 @@
     }
 
 
-    function isMemberAlreadyAdded(studentId, currentWrapper) {
+    function updateQuotaWarning() {
 
-        const memberIds = Array.from(
+        const selectedOption =
+            companySelect.options[
+                companySelect.selectedIndex
+            ];
+
+
+        if (
+            !selectedOption ||
+            !selectedOption.value
+        ) {
+
+            quotaWarning.classList.add('hidden');
+
+            quotaWarningText.textContent = '';
+
+            return;
+
+        }
+
+
+        const quota =
+            Number(
+                selectedOption.dataset.quota
+            );
+
+
+        /*
+         * Total students consists of:
+         * 1 leader + all added members.
+         */
+
+        const totalStudents =
+            1 + membersContainer.children.length;
+
+
+        if (totalStudents > quota) {
+
+            quotaWarning.classList.remove('hidden');
+
+            quotaWarningText.textContent =
+                `Kelompok ini berjumlah ${totalStudents} siswa, sedangkan perusahaan memiliki ${quota} kuota tersedia. Pengajuan tetap dapat dikirim, tetapi penerimaan dan penempatan tetap bergantung pada keputusan Hubin dan perusahaan.`;
+
+        } else {
+
+            quotaWarning.classList.add('hidden');
+
+            quotaWarningText.textContent = '';
+
+        }
+
+    }
+
+
+    function isMemberAlreadyAdded(
+        studentId,
+        currentWrapper
+    ) {
+
+        const memberIds =
+            Array.from(
                 membersContainer.querySelectorAll('.member-id')
             )
             .filter(input =>
@@ -400,16 +563,21 @@
             .filter(value => value);
 
 
-        return memberIds.includes(String(studentId));
+        return memberIds.includes(
+            String(studentId)
+        );
 
     }
 
 
     function createMemberRow() {
 
-        const memberId = memberIndex++;
+        const memberId =
+            memberIndex++;
 
-        const wrapper = document.createElement('div');
+        const wrapper =
+            document.createElement('div');
+
 
         wrapper.className =
             'member-row rounded-xl border border-slate-200 bg-white p-5';
@@ -558,153 +726,204 @@
             wrapper.querySelector('.member-id');
 
 
-        removeButton.addEventListener('click', function() {
+        removeButton.addEventListener(
+            'click',
+            function() {
 
-            wrapper.remove();
+                wrapper.remove();
 
-            updateEmptyState();
-
-        });
-
-
-        nisInput.addEventListener('input', function() {
-
-            memberIdInput.value = '';
-
-            result.classList.add('hidden');
-
-            error.classList.add('hidden');
-
-        });
-
-
-        searchButton.addEventListener('click', async function() {
-
-            const nisNip =
-                nisInput.value.trim();
-
-
-            error.classList.add('hidden');
-            result.classList.add('hidden');
-
-
-            if (!nisNip) {
-
-                error.textContent =
-                    'Masukkan NIS/NIP terlebih dahulu.';
-
-                error.classList.remove('hidden');
-
-                nisInput.focus();
-
-                return;
+                updateEmptyState();
+                updateQuotaWarning();
 
             }
+        );
 
 
-            if (nisNip === leaderNisNip) {
-
-                error.textContent =
-                    'Anda tidak dapat menambahkan diri sendiri sebagai anggota kelompok.';
-
-                error.classList.remove('hidden');
-
-                return;
-
-            }
-
-
-            searchButton.disabled = true;
-            searchButton.textContent = 'Mencari...';
-
-
-            try {
-
-                const response = await fetch(
-                    `{{ route('student.students.search') }}?nis_nip=${encodeURIComponent(nisNip)}`
-                );
-
-
-                const data = await response.json();
-
-
-                if (!response.ok) {
-
-                    throw new Error(
-                        data.message ?? 'Siswa tidak ditemukan.'
-                    );
-
-                }
-
-
-                if (data.role !== 'student') {
-
-                    throw new Error(
-                        'User tersebut bukan siswa dan tidak dapat ditambahkan sebagai anggota kelompok.'
-                    );
-
-                }
-
-
-                if (isMemberAlreadyAdded(data.id, wrapper)) {
-
-                    throw new Error(
-                        'Siswa tersebut sudah ditambahkan sebagai anggota kelompok.'
-                    );
-
-                }
-
-
-                memberIdInput.value =
-                    data.id;
-
-                wrapper.querySelector('.member-name').textContent =
-                    data.full_name;
-
-                wrapper.querySelector('.member-nis').textContent =
-                    data.nis_nip;
-
-                wrapper.querySelector('.member-class').textContent =
-                    data.class ?? '-';
-
-                wrapper.querySelector('.member-phone').textContent =
-                    data.phone_number ?? '-';
-
-
-                result.classList.remove('hidden');
-
-            } catch (exception) {
+        nisInput.addEventListener(
+            'input',
+            function() {
 
                 memberIdInput.value = '';
 
-                error.textContent =
-                    exception.message;
+                result.classList.add('hidden');
 
-                error.classList.remove('hidden');
-
-            } finally {
-
-                searchButton.disabled = false;
-                searchButton.textContent = 'Cari Siswa';
+                error.classList.add('hidden');
 
             }
+        );
 
-        });
+
+        searchButton.addEventListener(
+            'click',
+            async function() {
+
+                const nisNip =
+                    nisInput.value.trim();
+
+
+                error.classList.add('hidden');
+
+                result.classList.add('hidden');
+
+
+                if (!nisNip) {
+
+                    error.textContent =
+                        'Masukkan NIS/NIP terlebih dahulu.';
+
+                    error.classList.remove('hidden');
+
+                    nisInput.focus();
+
+                    return;
+
+                }
+
+
+                if (
+                    leaderNisNip &&
+                    nisNip === leaderNisNip
+                ) {
+
+                    error.textContent =
+                        'Anda tidak dapat menambahkan diri sendiri sebagai anggota kelompok.';
+
+                    error.classList.remove('hidden');
+
+                    return;
+
+                }
+
+
+                searchButton.disabled = true;
+
+                searchButton.textContent =
+                    'Mencari...';
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            `{{ route('student.students.search') }}?nis_nip=${encodeURIComponent(nisNip)}`
+                        );
+
+
+                    const data =
+                        await response.json();
+
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            data.message ??
+                            'Siswa tidak ditemukan.'
+                        );
+
+                    }
+
+
+                    if (data.role !== 'student') {
+
+                        throw new Error(
+                            'User tersebut bukan siswa dan tidak dapat ditambahkan sebagai anggota kelompok.'
+                        );
+
+                    }
+
+
+                    if (
+                        isMemberAlreadyAdded(
+                            data.id,
+                            wrapper
+                        )
+                    ) {
+
+                        throw new Error(
+                            'Siswa tersebut sudah ditambahkan sebagai anggota kelompok.'
+                        );
+
+                    }
+
+
+                    memberIdInput.value =
+                        data.id;
+
+                    wrapper.querySelector(
+                            '.member-name'
+                        ).textContent =
+                        data.full_name;
+
+                    wrapper.querySelector(
+                            '.member-nis'
+                        ).textContent =
+                        data.nis_nip;
+
+                    wrapper.querySelector(
+                            '.member-class'
+                        ).textContent =
+                        data.class ?? '-';
+
+                    wrapper.querySelector(
+                            '.member-phone'
+                        ).textContent =
+                        data.phone_number ?? '-';
+
+
+                    result.classList.remove(
+                        'hidden'
+                    );
+
+                } catch (exception) {
+
+                    memberIdInput.value = '';
+
+                    error.textContent =
+                        exception.message;
+
+                    error.classList.remove(
+                        'hidden'
+                    );
+
+                } finally {
+
+                    searchButton.disabled = false;
+
+                    searchButton.textContent =
+                        'Cari Siswa';
+
+                }
+
+            }
+        );
 
 
         updateEmptyState();
+        updateQuotaWarning();
 
     }
 
 
-    addMemberButton.addEventListener('click', function() {
+    addMemberButton.addEventListener(
+        'click',
+        function() {
 
-        createMemberRow();
+            createMemberRow();
 
-    });
+            updateQuotaWarning();
+
+        }
+    );
+
+
+    companySelect.addEventListener(
+        'change',
+        updateQuotaWarning
+    );
 
 
     updateEmptyState();
+    updateQuotaWarning();
 </script>
 
 @endsection
