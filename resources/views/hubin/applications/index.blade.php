@@ -131,7 +131,7 @@
 
 
             {{-- Actions --}}
-            <div class="md:col-span-3 flex gap-3">
+            <div class="flex gap-3 md:col-span-3">
 
                 <button
                     type="submit"
@@ -215,18 +215,73 @@
 
                     @foreach ($applications as $application)
 
+                    @php
+                    $isGroup = $application->groupMembers->isNotEmpty();
+                    $memberCount = $application->groupMembers->count();
+                    @endphp
+
                     <tr class="transition hover:bg-slate-50">
+
 
                         {{-- Application --}}
                         <td class="px-6 py-4">
 
-                            <p class="font-semibold text-slate-900">
-                                {{ $application->application_code }}
-                            </p>
+                            <div class="flex flex-col items-start gap-2">
 
-                            <p class="mt-1 text-xs text-slate-400">
-                                {{ \Carbon\Carbon::parse($application->application_date)->format('d/m/Y') }}
-                            </p>
+                                <p class="font-semibold text-slate-900">
+                                    {{ $application->application_code }}
+                                </p>
+
+
+                                {{-- Application Type --}}
+                                @if ($isGroup)
+
+                                <span
+                                    class="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
+
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 20 20"
+                                        fill="currentColor"
+                                        class="h-3.5 w-3.5">
+
+                                        <path
+                                            d="M7 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM13 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM2.5 16.5A4.5 4.5 0 0 1 7 12h0a4.5 4.5 0 0 1 4.5 4.5v.5h-9v-.5ZM11.5 12.17A4.49 4.49 0 0 1 13 12h0a4.5 4.5 0 0 1 4.5 4.5v.5h-5v-.5a5.48 5.48 0 0 0-1-3.17v-1.16Z" />
+
+                                    </svg>
+
+                                    Kelompok · {{ $memberCount }} anggota
+
+                                </span>
+
+                                @else
+
+                                <span
+                                    class="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 20 20"
+                                        fill="currentColor"
+                                        class="h-3.5 w-3.5">
+
+                                        <path
+                                            d="M10 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM4 16.5A6 6 0 0 1 10 10.5a6 6 0 0 1 6 6v.5H4v-.5Z" />
+
+                                    </svg>
+
+                                    Individual
+
+                                </span>
+
+                                @endif
+
+
+                                <p class="text-xs text-slate-400">
+                                    {{ \Carbon\Carbon::parse($application->application_date)->format('d/m/Y') }}
+                                </p>
+
+                            </div>
 
                         </td>
 
@@ -241,6 +296,14 @@
                             <p class="mt-1 text-sm text-slate-500">
                                 {{ $application->leaderStudent->class ?? '-' }}
                             </p>
+
+                            @if ($isGroup)
+
+                            <p class="mt-1 text-xs text-amber-600">
+                                Ketua Kelompok
+                            </p>
+
+                            @endif
 
                         </td>
 
