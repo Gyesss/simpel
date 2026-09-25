@@ -1,10 +1,19 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Student\DashboardController;
 use App\Http\Controllers\Student\CompanyController;
 use App\Http\Controllers\Student\InternshipApplicationController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+
+
+// :3
+
+Route::get('/', function () {
+    return view('home');
+})->name('home');
 
 
 /*
@@ -27,6 +36,48 @@ Route::post('/login', [AuthController::class, 'login'])
 Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
+
+
+/*
+|--------------------------------------------------------------------------
+| Profile
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware('auth')->group(function () {
+
+    // Profile
+    Route::get('/profile', [ProfileController::class, 'show'])
+        ->name('profile.show');
+
+    // Edit Profile
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])
+        ->name('profile.edit');
+
+    // Update Profile Information
+    Route::put('/profile', [ProfileController::class, 'update'])
+        ->name('profile.update');
+
+    // Update Password
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])
+        ->name('profile.password.update');
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| Dashboard Redirect
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware('auth')->get('/dashboard', function () {
+    return match (Auth::user()->role) {
+        'student' => redirect()->route('student.dashboard'),
+        'hubin' => redirect()->route('hubin.dashboard'),
+        'company' => redirect()->route('company.dashboard'),
+        default => abort(403),
+    };
+})->name('dashboard');
 
 
 /*
