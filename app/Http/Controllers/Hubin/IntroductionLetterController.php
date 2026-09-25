@@ -328,16 +328,16 @@ class IntroductionLetterController extends Controller
     /**
      * Generate and display the introduction letter as PDF.
      */
-    public function pdf(
+    public function previewPdf(
         IntroductionLetter $introductionLetter
     ) {
-        $introductionLetter->load([
-            'internshipApplication.leaderStudent',
-            'internshipApplication.company',
-            'internshipApplication.groupMembers.student',
-        ]);
+        /*
+        |--------------------------------------------------------------------------
+        | PDF hanya dapat dibuat untuk surat yang sudah diterbitkan
+        |--------------------------------------------------------------------------
+        */
 
-        if ($introductionLetter->status === 'cancelled') {
+        if ($introductionLetter->status !== 'issued') {
 
             return redirect()
                 ->route(
@@ -346,9 +346,27 @@ class IntroductionLetterController extends Controller
                 )
                 ->with(
                     'error',
-                    'Surat yang sudah dibatalkan tidak dapat dicetak sebagai surat aktif.'
+                    'PDF hanya dapat dibuat untuk surat yang sudah diterbitkan.'
                 );
         }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Load Required Relations
+        |--------------------------------------------------------------------------
+        */
+
+        $introductionLetter->load([
+            'internshipApplication.leaderStudent',
+            'internshipApplication.company',
+            'internshipApplication.groupMembers.student',
+        ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Generate PDF
+        |--------------------------------------------------------------------------
+        */
 
         $pdf = Pdf::loadView(
             'hubin.introduction-letters.pdf',
@@ -357,15 +375,27 @@ class IntroductionLetterController extends Controller
 
         $pdf->setPaper('a4', 'portrait');
 
+        /*
+        |--------------------------------------------------------------------------
+        | Generate Safe File Name
+        |--------------------------------------------------------------------------
+        */
+
         $fileName = 'surat-pengantar-' .
             $introductionLetter->letter_number .
             '.pdf';
 
         $fileName = str_replace(
-            '/',
-            '-',
+            ['/', '\\', ' '],
+            ['-', '-', '-'],
             $fileName
         );
+
+        /*
+        |--------------------------------------------------------------------------
+        | Display PDF in Browser
+        |--------------------------------------------------------------------------
+        */
 
         return $pdf->stream($fileName);
     }

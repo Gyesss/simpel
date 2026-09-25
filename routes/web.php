@@ -312,6 +312,16 @@ Route::middleware(['auth', 'role:hubin'])->group(function () {
         [HubinIntroductionLetterController::class, 'pdf']
     )->name('hubin.introduction-letters.pdf');
 
+    Route::get(
+        '/hubin/introduction-letters/{introductionLetter}/pdf',
+        [HubinIntroductionLetterController::class, 'previewPdf']
+    )->name('hubin.introduction-letters.pdf');
+
+    Route::get(
+        '/hubin/introduction-letters/{introductionLetter}/pdf/download',
+        [HubinIntroductionLetterController::class, 'downloadPdf']
+    )->name('hubin.introduction-letters.pdf.download');
+
     Route::patch(
         '/hubin/introduction-letters/{introductionLetter}/issue',
         [HubinIntroductionLetterController::class, 'issue']

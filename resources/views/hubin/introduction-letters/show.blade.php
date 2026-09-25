@@ -21,7 +21,7 @@
 
                 <path
                     fill-rule="evenodd"
-                    d="M17 10a.75.75 0 0 1-.75.75H5.56l3.22 3.22a.75.75 0 1 1-1.06 1.06l3.22 3.22a.75.75 0 1 1-1.06 1.06l-4.5-4.5a.75.75 0 0 1 0-1.06l4.5-4.5a.75.75 0 0 1 1.06-1.06L10 9.25h6.25A.75.75 0 0 1 17 10Z"
+                    d="M17 10a.75.75 0 0 1-.75.75H5.56l3.22 3.22a.75.75 0 1 1-1.06 1.06l3.22 3.22a.75.75 0 1 1 1.06 1.06l4.5 4.5a.75.75 0 0 1 0 1.06l-4.5 4.5a.75.75 0 1 1-1.06-1.06L10 10.75h6.25A.75.75 0 0 1 17 10Z"
                     clip-rule="evenodd" />
 
             </svg>
@@ -297,7 +297,11 @@
 
                 <p class="mt-1 font-medium text-slate-700">
                     {{ \Carbon\Carbon::parse($application->internship_start_date)->format('d/m/Y') }}
-                    <span class="mx-1 text-slate-400">s/d</span>
+
+                    <span class="mx-1 text-slate-400">
+                        s/d
+                    </span>
+
                     {{ \Carbon\Carbon::parse($application->internship_end_date)->format('d/m/Y') }}
                 </p>
 
@@ -599,25 +603,72 @@
             {{-- Issued Actions --}}
             @if ($introductionLetter->status === 'issued')
 
-            {{-- Preview --}}
-            <button
-                type="button"
-                disabled
-                class="inline-flex w-full cursor-not-allowed items-center justify-center rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-400 sm:w-auto">
+            {{-- Preview PDF --}}
+            <a
+                href="{{ route('hubin.introduction-letters.pdf', $introductionLetter) }}"
+                target="_blank"
+                rel="noopener"
+                class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700 sm:w-auto">
+
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    class="h-4 w-4">
+
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M2.25 12s3.75-6.75 9.75-6.75S21.75 12 21.75 12 18 18.75 12 18.75 2.25 12 2.25 12Z" />
+
+                    <circle
+                        cx="12"
+                        cy="12"
+                        r="2.75" />
+
+                </svg>
 
                 Preview PDF
 
-            </button>
+            </a>
 
-            {{-- Print --}}
-            <button
-                type="button"
-                disabled
-                class="inline-flex w-full cursor-not-allowed items-center justify-center rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-400 sm:w-auto">
+            {{-- Print PDF --}}
+            <a
+                href="{{ route('hubin.introduction-letters.pdf', $introductionLetter) }}"
+                target="_blank"
+                rel="noopener"
+                class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 sm:w-auto">
+
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    class="h-4 w-4">
+
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M6.75 8.25V4.5h10.5v3.75" />
+
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M6 18.75h12v-6H6v6Z" />
+
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M6 15H4.5A1.5 1.5 0 0 1 3 13.5v-3A1.5 1.5 0 0 1 4.5 9h15A1.5 1.5 0 0 1 21 10.5v3a1.5 1.5 0 0 1-1.5 1.5H18" />
+
+                </svg>
 
                 Cetak PDF
 
-            </button>
+            </a>
 
             {{-- Suspend --}}
             <button

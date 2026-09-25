@@ -2,7 +2,6 @@
 <html lang="id">
 
 <head>
-
     <meta charset="UTF-8">
 
     <title>
@@ -11,128 +10,87 @@
 
     <style>
         @page {
-            margin: 2.2cm 2.2cm 2cm 2.5cm;
-        }
-
-        * {
-            box-sizing: border-box;
+            margin: 25mm 25mm 25mm 25mm;
         }
 
         body {
-            margin: 0;
-            color: #111827;
             font-family: DejaVu Sans, sans-serif;
             font-size: 11pt;
             line-height: 1.6;
+            color: #000;
         }
 
         .header {
-            width: 100%;
-            border-bottom: 3px solid #111827;
-            padding-bottom: 10px;
-            margin-bottom: 24px;
-        }
-
-        .header-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .header-table td {
-            vertical-align: middle;
-        }
-
-        .logo {
-            width: 80px;
-            height: 80px;
-            border: 1px solid #9ca3af;
             text-align: center;
-            vertical-align: middle;
-            color: #6b7280;
-            font-size: 9pt;
+            margin-bottom: 10px;
         }
 
         .school-name {
-            text-align: center;
             font-size: 16pt;
             font-weight: bold;
-            letter-spacing: 0.5px;
+            margin: 0;
         }
 
-        .school-subtitle {
-            margin-top: 2px;
-            text-align: center;
+        .school-type {
             font-size: 11pt;
             font-weight: bold;
+            margin: 2px 0;
         }
 
         .school-address {
-            margin-top: 4px;
-            text-align: center;
-            font-size: 8.5pt;
-            color: #374151;
+            font-size: 9pt;
+            margin: 2px 0;
         }
 
-        .letter-title {
+        .header-line {
+            border-top: 3px solid #000;
+            border-bottom: 1px solid #000;
+            height: 4px;
+            margin-top: 10px;
+            margin-bottom: 25px;
+        }
+
+        .title {
             text-align: center;
-            font-weight: bold;
-            font-size: 12pt;
+            margin-bottom: 2px;
+        }
+
+        .title h1 {
+            font-size: 13pt;
+            margin: 0;
             text-decoration: underline;
-            margin-top: 18px;
         }
 
         .letter-number {
             text-align: center;
-            font-size: 10pt;
-            margin-top: 2px;
+            margin-bottom: 25px;
         }
 
-        .metadata {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 24px;
-            margin-bottom: 18px;
-        }
-
-        .metadata td {
-            padding: 2px 0;
-            vertical-align: top;
-        }
-
-        .metadata .label {
-            width: 80px;
-        }
-
-        .metadata .colon {
-            width: 12px;
-        }
-
-        .content {
+        .paragraph {
             text-align: justify;
+            margin-bottom: 12px;
         }
 
-        .content p {
-            margin-top: 0;
-            margin-bottom: 12px;
+        .recipient {
+            margin-top: 15px;
+            margin-bottom: 15px;
         }
 
         .student-table {
             width: 100%;
             border-collapse: collapse;
-            margin: 14px 0 16px;
-            font-size: 9.5pt;
+            margin: 15px 0;
         }
 
         .student-table th,
         .student-table td {
-            border: 1px solid #374151;
-            padding: 6px 7px;
+            border: 1px solid #000;
+            padding: 7px 8px;
         }
 
         .student-table th {
             text-align: center;
             font-weight: bold;
-            background: #f3f4f6;
         }
 
         .student-table .number {
@@ -141,7 +99,7 @@
         }
 
         .student-table .nis {
-            width: 90px;
+            width: 100px;
         }
 
         .student-table .class {
@@ -149,334 +107,304 @@
             text-align: center;
         }
 
+        .period-table {
+            width: 100%;
+            margin: 15px 0;
+        }
+
+        .period-table td {
+            padding: 3px 0;
+        }
+
         .signature {
             width: 100%;
             margin-top: 40px;
         }
 
-        .signature-table {
-            width: 100%;
-            border-collapse: collapse;
+        .signature-date {
+            text-align: center;
+            margin-bottom: 5px;
         }
 
-        .signature-table td {
-            vertical-align: top;
-        }
-
-        .signature-left {
-            width: 55%;
-        }
-
-        .signature-right {
+        .signature-box {
             width: 45%;
-            text-align: left;
+            margin-left: auto;
+            text-align: center;
         }
 
         .signature-space {
-            height: 85px;
+            height: 75px;
         }
 
-        .principal-name {
+        .signature-name {
             font-weight: bold;
             text-decoration: underline;
         }
 
         .footer-note {
-            margin-top: 35px;
-            padding-top: 8px;
-            border-top: 1px solid #d1d5db;
+            margin-top: 30px;
             font-size: 8pt;
-            color: #6b7280;
+            color: #555;
             text-align: center;
         }
     </style>
-
 </head>
 
 <body>
 
-    {{-- ========================================================= --}}
-    {{-- HEADER --}}
-    {{-- ========================================================= --}}
+    @php
+    $application = $introductionLetter->internshipApplication;
+
+    $students = collect();
+
+    if ($application->leaderStudent) {
+    $students->push($application->leaderStudent);
+    }
+
+    foreach ($application->groupMembers as $member) {
+    if ($member->student) {
+    $students->push($member->student);
+    }
+    }
+
+    $students = $students
+    ->unique('id')
+    ->values();
+
+    $letterDate = $introductionLetter->letter_date
+    ->locale('id')
+    ->translatedFormat('d F Y');
+
+    $internshipStart = \Carbon\Carbon::parse(
+    $application->internship_start_date
+    )
+    ->locale('id')
+    ->translatedFormat('d F Y');
+
+    $internshipEnd = \Carbon\Carbon::parse(
+    $application->internship_end_date
+    )
+    ->locale('id')
+    ->translatedFormat('d F Y');
+    @endphp
+
+
+    {{-- HEADER SEKOLAH --}}
 
     <div class="header">
 
-        <table class="header-table">
+        <p class="school-name">
+            SMK ICB CINTA NIAGA
+        </p>
+
+        <p class="school-type">
+            SEKOLAH MENENGAH KEJURUAN
+        </p>
+
+        <p class="school-address">
+            [ALAMAT LENGKAP SEKOLAH]
+        </p>
+
+        <p class="school-address">
+            Telp. [NOMOR TELEPON] &nbsp; | &nbsp;
+            Email: [EMAIL SEKOLAH]
+        </p>
+
+    </div>
+
+    <div class="header-line"></div>
+
+
+    {{-- JUDUL SURAT --}}
+
+    <div class="title">
+
+        <h1>
+            SURAT PENGANTAR PRAKTIK KERJA LAPANGAN
+        </h1>
+
+        <strong>
+            (PKL)
+        </strong>
+
+    </div>
+
+    <div class="letter-number">
+
+        Nomor:
+        {{ $introductionLetter->letter_number }}
+
+    </div>
+
+
+    {{-- PEMBUKA --}}
+
+    <p class="paragraph">
+        Yang bertanda tangan di bawah ini, Kepala SMK ICB Cinta Niaga,
+        menerangkan bahwa siswa-siswi berikut merupakan peserta
+        Praktik Kerja Lapangan (PKL) dari SMK ICB Cinta Niaga:
+    </p>
+
+
+    {{-- DATA SISWA --}}
+
+    <table class="student-table">
+
+        <thead>
+
+            <tr>
+                <th class="number">
+                    No.
+                </th>
+
+                <th>
+                    Nama Siswa
+                </th>
+
+                <th class="nis">
+                    NIS
+                </th>
+
+                <th class="class">
+                    Kelas
+                </th>
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            @foreach ($students as $index => $student)
 
             <tr>
 
-                <td style="width: 90px;">
-
-                    <div class="logo">
-                        LOGO<br>
-                        SEKOLAH
-                    </div>
-
+                <td class="number">
+                    {{ $index + 1 }}
                 </td>
 
                 <td>
+                    {{ $student->full_name }}
+                </td>
 
-                    <div class="school-name">
-                        SMK ICB CINTA NIAGA
-                    </div>
+                <td>
+                    {{ $student->nis_nip ?? '-' }}
+                </td>
 
-                    <div class="school-subtitle">
-                        BANDUNG
-                    </div>
-
-                    <div class="school-address">
-                        [Alamat Sekolah]
-                        &nbsp; | &nbsp;
-                        Telp. [Nomor Telepon]
-                        &nbsp; | &nbsp;
-                        Email: [Email Sekolah]
-                    </div>
-
+                <td class="class">
+                    {{ $student->class ?? '-' }}
                 </td>
 
             </tr>
 
-        </table>
+            @endforeach
+
+        </tbody>
+
+    </table>
+
+
+    {{-- TUJUAN PERUSAHAAN --}}
+
+    <p class="paragraph">
+        Siswa-siswi tersebut akan melaksanakan Praktik Kerja Lapangan
+        di:
+    </p>
+
+    <div class="recipient">
+
+        <strong>
+            {{ $application->company->company_name }}
+        </strong>
+
+        <br>
+
+        {{ $application->company->full_address }}
 
     </div>
 
-    {{-- ========================================================= --}}
-    {{-- TITLE --}}
-    {{-- ========================================================= --}}
 
-    <div class="letter-title">
-        SURAT PENGANTAR PRAKTIK KERJA LAPANGAN
-    </div>
+    {{-- PERIODE PKL --}}
 
-    <div class="letter-number">
-        Nomor: {{ $introductionLetter->letter_number }}
-    </div>
+    <p class="paragraph">
+        Adapun pelaksanaan Praktik Kerja Lapangan tersebut direncanakan
+        berlangsung pada:
+    </p>
 
-    {{-- ========================================================= --}}
-    {{-- RECIPIENT --}}
-    {{-- ========================================================= --}}
-
-    <table class="metadata">
+    <table class="period-table">
 
         <tr>
-
-            <td class="label">
-                Lampiran
-            </td>
-
-            <td class="colon">
-                :
+            <td style="width: 160px;">
+                <strong>
+                    Periode PKL
+                </strong>
             </td>
 
             <td>
-                1 (satu) berkas
+                :
+                {{ $internshipStart }}
+                s.d.
+                {{ $internshipEnd }}
             </td>
-
         </tr>
 
         <tr>
-
-            <td class="label">
-                Perihal
-            </td>
-
-            <td class="colon">
-                :
+            <td>
+                <strong>
+                    Tempat
+                </strong>
             </td>
 
             <td>
-                Pengantar Praktik Kerja Lapangan (PKL)
+                :
+                {{ $application->company->company_name }}
             </td>
-
         </tr>
 
     </table>
 
-    <div class="content">
 
-        <p>
-            Yth. Pimpinan
-            <strong>
-                {{ $introductionLetter->internshipApplication->company->company_name ?? '-' }}
-            </strong>
-            <br>
-            di tempat
-        </p>
+    {{-- PENUTUP --}}
 
-        <p>
-            Dengan hormat,
-        </p>
+    <p class="paragraph">
+        Demikian surat pengantar ini dibuat untuk dapat dipergunakan
+        sebagaimana mestinya. Kami mengucapkan terima kasih atas
+        perhatian dan kerja sama yang diberikan dalam pelaksanaan
+        Praktik Kerja Lapangan siswa-siswi kami.
+    </p>
 
-        <p>
-            Dalam rangka pelaksanaan kegiatan Praktik Kerja Lapangan (PKL)
-            bagi peserta didik SMK ICB Cinta Niaga Bandung, dengan ini kami
-            menerangkan dan mengantarkan peserta didik berikut untuk dapat
-            melaksanakan kegiatan Praktik Kerja Lapangan pada instansi/
-            perusahaan yang Bapak/Ibu pimpin.
-        </p>
 
-        {{-- ===================================================== --}}
-        {{-- STUDENTS --}}
-        {{-- ===================================================== --}}
-
-        <table class="student-table">
-
-            <thead>
-
-                <tr>
-
-                    <th class="number">
-                        No.
-                    </th>
-
-                    <th class="nis">
-                        NIS/NIP
-                    </th>
-
-                    <th>
-                        Nama Peserta Didik
-                    </th>
-
-                    <th class="class">
-                        Kelas
-                    </th>
-
-                </tr>
-
-            </thead>
-
-            <tbody>
-
-                @php
-                $students = collect();
-
-                if ($introductionLetter->internshipApplication->leaderStudent) {
-                $students->push(
-                $introductionLetter->internshipApplication->leaderStudent
-                );
-                }
-
-                foreach (
-                $introductionLetter->internshipApplication->groupMembers
-                as $member
-                ) {
-                if (
-                $member->student &&
-                ! $students->contains('id', $member->student->id)
-                ) {
-                $students->push($member->student);
-                }
-                }
-                @endphp
-
-                @foreach ($students as $student)
-
-                <tr>
-
-                    <td class="number">
-                        {{ $loop->iteration }}
-                    </td>
-
-                    <td>
-                        {{ $student->nis_nip ?? '-' }}
-                    </td>
-
-                    <td>
-                        {{ $student->full_name ?? '-' }}
-                    </td>
-
-                    <td class="class">
-                        {{ $student->class ?? '-' }}
-                    </td>
-
-                </tr>
-
-                @endforeach
-
-            </tbody>
-
-        </table>
-
-        {{-- ===================================================== --}}
-        {{-- INTERNSHIP INFORMATION --}}
-        {{-- ===================================================== --}}
-
-        <p>
-            Peserta didik tersebut akan melaksanakan Praktik Kerja Lapangan
-            selama periode
-            <strong>
-                {{ \Carbon\Carbon::parse(
-                    $introductionLetter->internshipApplication->internship_start_date
-                )->translatedFormat('d F Y') }}
-            </strong>
-            sampai dengan
-            <strong>
-                {{ \Carbon\Carbon::parse(
-                    $introductionLetter->internshipApplication->internship_end_date
-                )->translatedFormat('d F Y') }}
-            </strong>.
-        </p>
-
-        <p>
-            Kami mengharapkan bantuan dan kerja sama dari pihak perusahaan
-            dalam memberikan bimbingan, pengarahan, serta pengalaman kerja
-            yang relevan kepada peserta didik selama pelaksanaan kegiatan
-            tersebut.
-        </p>
-
-        <p>
-            Demikian surat pengantar ini kami sampaikan. Atas perhatian,
-            kerja sama, dan kesempatan yang diberikan, kami mengucapkan
-            terima kasih.
-        </p>
-
-    </div>
-
-    {{-- ========================================================= --}}
-    {{-- SIGNATURE --}}
-    {{-- ========================================================= --}}
+    {{-- TANDA TANGAN --}}
 
     <div class="signature">
 
-        <table class="signature-table">
+        <div class="signature-date">
+            Bandung, {{ $letterDate }}
+        </div>
 
-            <tr>
+        <div class="signature-box">
 
-                <td class="signature-left">
-                </td>
+            <div>
+                Kepala SMK ICB Cinta Niaga
+            </div>
 
-                <td class="signature-right">
+            <div class="signature-space">
+            </div>
 
-                    Bandung,
-                    {{ \Carbon\Carbon::parse(
-                        $introductionLetter->letter_date
-                    )->translatedFormat('d F Y') }}
+            <div class="signature-name">
+                [NAMA KEPALA SEKOLAH]
+            </div>
 
-                    <br>
+            <div>
+                NIP. [NIP KEPALA SEKOLAH]
+            </div>
 
-                    Kepala SMK ICB Cinta Niaga
-
-                    <div class="signature-space">
-                    </div>
-
-                    <div class="principal-name">
-                        [Nama Kepala Sekolah]
-                    </div>
-
-                    <div>
-                        NIP. [NIP Kepala Sekolah]
-                    </div>
-
-                </td>
-
-            </tr>
-
-        </table>
+        </div>
 
     </div>
 
+
     <div class="footer-note">
-        Dokumen ini dibuat melalui Sistem Manajemen PKL (SIMPEL).
+        Dokumen ini diterbitkan melalui Sistem Manajemen PKL (SIMPEL).
     </div>
 
 </body>
