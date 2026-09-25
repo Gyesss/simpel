@@ -21,7 +21,7 @@
 
                 <path
                     fill-rule="evenodd"
-                    d="M17 10a.75.75 0 0 1-.75.75H5.56l3.22 3.22a.75.75 0 1 1-1.06 1.06l-4.5-4.5a.75.75 0 0 1 0-1.06l4.5-4.5a.75.75 0 1 1 1.06 1.06L5.56 9.25h10.69A.75.75 0 0 1 17 10Z"
+                    d="M17 10a.75.75 0 0 1-.75.75H5.56l3.22 3.22a.75.75 0 1 1-1.06 1.06l3.22 3.22a.75.75 0 1 1-1.06 1.06l-4.5-4.5a.75.75 0 0 1 0-1.06l4.5-4.5a.75.75 0 0 1 1.06-1.06L10 9.25h6.25A.75.75 0 0 1 17 10Z"
                     clip-rule="evenodd" />
 
             </svg>
@@ -370,12 +370,7 @@
     @endif
 
     {{-- Withdrawal Information --}}
-    @if (
-    in_array(
-    $introductionLetter->status,
-    ['suspended', 'cancelled']
-    )
-    )
+    @if (in_array($introductionLetter->status, ['suspended', 'cancelled']))
 
     <div class="mb-6 rounded-2xl border border-slate-200 bg-white shadow-sm">
 
@@ -445,7 +440,7 @@
 
     @endif
 
-    {{-- Document Preview Placeholder --}}
+    {{-- Document Preview --}}
     <div class="mb-6 rounded-2xl border border-slate-200 bg-white shadow-sm">
 
         <div class="border-b border-slate-100 px-6 py-5">
@@ -455,49 +450,97 @@
             </h2>
 
             <p class="mt-1 text-sm text-slate-500">
-                Preview dan cetak PDF akan tersedia setelah format surat sekolah ditentukan.
+                Dokumen surat pengantar PKL.
             </p>
 
         </div>
 
         <div class="p-6">
 
-            <div class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-6 py-10 text-center">
+            @if ($introductionLetter->status === 'issued')
 
-                <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-sm">
+            <div class="rounded-2xl border border-green-200 bg-green-50 p-5">
 
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="1.8"
-                        class="h-6 w-6 text-slate-400">
+                <div class="flex gap-3">
 
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M19.5 14.25v-8.25A2.25 2.25 0 0 0 17.25 3.75h-10.5A2.25 2.25 0 0 0 4.5 6v12a2.25 2.25 0 0 0 2.25 2.25h10.5A2.25 2.25 0 0 0 19.5 18v-3.75" />
+                    <div class="mt-0.5 shrink-0">
 
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M8.25 8.25h7.5M8.25 12h5.25" />
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                            class="h-5 w-5 text-green-600">
 
-                    </svg>
+                            <path
+                                fill-rule="evenodd"
+                                d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.857a.75.75 0 0 0-1.214-.886l-3.25 4.446-1.786-1.786a.75.75 0 0 0-1.06 1.06l2.4 2.4a.75.75 0 0 0 1.137-.087l3.773-5.147Z"
+                                clip-rule="evenodd" />
+
+                        </svg>
+
+                    </div>
+
+                    <div>
+
+                        <p class="text-sm font-semibold text-green-800">
+                            Surat telah diterbitkan
+                        </p>
+
+                        <p class="mt-1 text-sm leading-6 text-green-700">
+                            Surat ini sudah berstatus diterbitkan dan dapat digunakan
+                            sebagai dokumen administrasi PKL.
+                        </p>
+
+                    </div>
 
                 </div>
 
-                <p class="mt-4 text-sm font-semibold text-slate-700">
-                    Dokumen PDF belum tersedia
+            </div>
+
+            @elseif ($introductionLetter->status === 'cancelled')
+
+            <div class="rounded-2xl border border-red-200 bg-red-50 p-5">
+
+                <p class="text-sm font-semibold text-red-800">
+                    Surat telah dibatalkan
                 </p>
 
-                <p class="mx-auto mt-1 max-w-md text-sm leading-6 text-slate-500">
-                    Struktur dan format surat sekolah akan ditentukan terlebih dahulu.
-                    Setelah itu fitur preview dan cetak PDF dapat ditambahkan.
+                <p class="mt-1 text-sm leading-6 text-red-700">
+                    Dokumen ini tetap disimpan sebagai riwayat administrasi.
+                    Surat ini tidak dapat diterbitkan kembali.
                 </p>
 
             </div>
+
+            @elseif ($introductionLetter->status === 'suspended')
+
+            <div class="rounded-2xl border border-amber-200 bg-amber-50 p-5">
+
+                <p class="text-sm font-semibold text-amber-800">
+                    Surat sedang ditangguhkan
+                </p>
+
+                <p class="mt-1 text-sm leading-6 text-amber-700">
+                    Surat tidak sedang aktif sampai Hubin mengaktifkannya kembali.
+                </p>
+
+            </div>
+
+            @else
+
+            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+
+                <p class="text-sm font-semibold text-slate-700">
+                    Surat masih berupa draft
+                </p>
+
+                <p class="mt-1 text-sm leading-6 text-slate-500">
+                    Surat belum diterbitkan dan belum dianggap sebagai dokumen resmi.
+                </p>
+
+            </div>
+
+            @endif
 
         </div>
 
@@ -624,13 +667,44 @@
             {{-- Cancelled --}}
             @if ($introductionLetter->status === 'cancelled')
 
-            <div class="rounded-xl bg-red-50 px-4 py-3">
+            <div class="w-full rounded-xl border border-red-200 bg-red-50 p-4">
 
                 <p class="text-sm font-medium text-red-700">
                     Surat ini sudah dibatalkan dan tidak dapat diterbitkan kembali.
                 </p>
 
             </div>
+
+            @if ($application ?? null)
+
+            @if ($application->status === 'approved')
+
+            <a
+                href="{{ route('hubin.introduction-letters.create', $application) }}"
+                class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-amber-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-amber-600 sm:w-auto">
+
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    class="h-4 w-4">
+
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 4v16m8-8H4" />
+
+                </svg>
+
+                Buat Surat Pengantar Baru
+
+            </a>
+
+            @endif
+
+            @endif
 
             @endif
 
@@ -745,6 +819,7 @@
 
             <p class="mt-1 text-sm text-red-700">
                 Pembatalan bersifat final. Surat yang dibatalkan tidak dapat diterbitkan kembali.
+                Namun, pengajuan PKL dapat dibuatkan surat baru dengan nomor baru.
             </p>
 
         </div>

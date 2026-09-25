@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Hubin;
 use App\Http\Controllers\Controller;
 use App\Models\IntroductionLetter;
 use App\Models\InternshipApplication;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -100,16 +101,34 @@ class IntroductionLetterController extends Controller
                 );
         }
 
-        if ($application->introductionLetter) {
+        /*
+        |--------------------------------------------------------------------------
+        | Only active letters block creation
+        |--------------------------------------------------------------------------
+        |
+        | A cancelled letter does not block a new letter.
+        |
+        */
+
+        $hasActiveLetter = $application
+            ->introductionLetters()
+            ->whereIn('status', [
+                'draft',
+                'issued',
+                'suspended',
+            ])
+            ->exists();
+
+        if ($hasActiveLetter) {
 
             return redirect()
                 ->route(
-                    'hubin.introduction-letters.show',
-                    $application->introductionLetter
+                    'hubin.applications.show',
+                    $application
                 )
                 ->with(
                     'error',
-                    'Pengajuan ini sudah memiliki surat pengantar.'
+                    'Pengajuan ini masih memiliki surat pengantar yang aktif.'
                 );
         }
 
@@ -149,7 +168,22 @@ class IntroductionLetterController extends Controller
                 );
         }
 
-        if ($application->introductionLetter()->exists()) {
+        /*
+        |--------------------------------------------------------------------------
+        | Prevent Multiple Active Letters
+        |--------------------------------------------------------------------------
+        */
+
+        $hasActiveLetter = $application
+            ->introductionLetters()
+            ->whereIn('status', [
+                'draft',
+                'issued',
+                'suspended',
+            ])
+            ->exists();
+
+        if ($hasActiveLetter) {
 
             return redirect()
                 ->route(
@@ -158,7 +192,7 @@ class IntroductionLetterController extends Controller
                 )
                 ->with(
                     'error',
-                    'Pengajuan ini sudah memiliki surat pengantar.'
+                    'Pengajuan ini masih memiliki surat pengantar yang aktif.'
                 );
         }
 
@@ -181,32 +215,18 @@ class IntroductionLetterController extends Controller
 
             /*
             |--------------------------------------------------------------------------
-            | Find Last Number For This Year
+            | Find Last Letter Number For This Year
             |--------------------------------------------------------------------------
-            |
-            | The number is stored inside the letter_number itself.
-            | Example:
-            |
-            | 421.5/001/PKL/SMK-ICB/IX/2026
-            |
             */
-
-            $prefix = '421.5/';
 
             $lastLetter = IntroductionLetter::where(
                 'letter_number',
                 'like',
-                $prefix . '%/PKL/SMK-ICB/%/' . $year
+                '421.5/%/PKL/SMK-ICB/%/' . $year
             )
                 ->orderByDesc('id')
                 ->lockForUpdate()
                 ->first();
-
-            /*
-            |--------------------------------------------------------------------------
-            | Determine Next Sequence
-            |--------------------------------------------------------------------------
-            */
 
             $nextNumber = 1;
 
@@ -217,19 +237,10 @@ class IntroductionLetterController extends Controller
                     $lastLetter->letter_number
                 );
 
-                /*
-                 * Expected structure:
-                 *
-                 * 0 => 421.5
-                 * 1 => 001
-                 * 2 => PKL
-                 * 3 => SMK-ICB
-                 * 4 => IX
-                 * 5 => 2026
-                 */
-
-                if (isset($parts[1]) && is_numeric($parts[1])) {
-
+                if (
+                    isset($parts[1]) &&
+                    is_numeric($parts[1])
+                ) {
                     $nextNumber = ((int) $parts[1]) + 1;
                 }
             }
@@ -298,8 +309,9 @@ class IntroductionLetterController extends Controller
     /**
      * Display the specified introduction letter.
      */
-    public function show(IntroductionLetter $introductionLetter)
-    {
+    public function show(
+        IntroductionLetter $introductionLetter
+    ) {
         $introductionLetter->load([
             'internshipApplication.leaderStudent',
             'internshipApplication.company',
@@ -314,10 +326,56 @@ class IntroductionLetterController extends Controller
     }
 
     /**
+     * Generate and display the introduction letter as PDF.
+     */
+    public function pdf(
+        IntroductionLetter $introductionLetter
+    ) {
+        $introductionLetter->load([
+            'internshipApplication.leaderStudent',
+            'internshipApplication.company',
+            'internshipApplication.groupMembers.student',
+        ]);
+
+        if ($introductionLetter->status === 'cancelled') {
+
+            return redirect()
+                ->route(
+                    'hubin.introduction-letters.show',
+                    $introductionLetter
+                )
+                ->with(
+                    'error',
+                    'Surat yang sudah dibatalkan tidak dapat dicetak sebagai surat aktif.'
+                );
+        }
+
+        $pdf = Pdf::loadView(
+            'hubin.introduction-letters.pdf',
+            compact('introductionLetter')
+        );
+
+        $pdf->setPaper('a4', 'portrait');
+
+        $fileName = 'surat-pengantar-' .
+            $introductionLetter->letter_number .
+            '.pdf';
+
+        $fileName = str_replace(
+            '/',
+            '-',
+            $fileName
+        );
+
+        return $pdf->stream($fileName);
+    }
+
+    /**
      * Issue the introduction letter.
      */
-    public function issue(IntroductionLetter $introductionLetter)
-    {
+    public function issue(
+        IntroductionLetter $introductionLetter
+    ) {
         if ($introductionLetter->status !== 'draft') {
 
             return redirect()

@@ -341,6 +341,9 @@
                 {{-- Introduction Letter --}}
                 @if ($application->introductionLetter)
 
+                {{-- Active / Suspended Letter --}}
+                @if ($application->introductionLetter->status !== 'cancelled')
+
                 <a
                     href="{{ route('hubin.introduction-letters.show', $application->introductionLetter) }}"
                     class="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800">
@@ -366,6 +369,48 @@
 
                 @else
 
+                {{-- Cancelled Letter --}}
+                <div class="mt-4 rounded-xl border border-red-200 bg-red-50 p-4">
+
+                    <p class="text-sm font-semibold text-red-800">
+                        Surat Pengantar Dibatalkan
+                    </p>
+
+                    <p class="mt-1 text-sm leading-6 text-red-700">
+                        Surat sebelumnya telah dibatalkan dan tidak dapat diterbitkan kembali.
+                        Pengajuan ini dapat dibuatkan surat pengantar baru.
+                    </p>
+
+                </div>
+
+                <a
+                    href="{{ route('hubin.introduction-letters.create', $application) }}"
+                    class="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-amber-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-amber-600">
+
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        class="h-4 w-4">
+
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M12 4v16m8-8H4" />
+
+                    </svg>
+
+                    Buat Surat Pengantar Baru
+
+                </a>
+
+                @endif
+
+                @else
+
+                {{-- No Letter Yet --}}
                 <a
                     href="{{ route('hubin.introduction-letters.create', $application) }}"
                     class="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-amber-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-amber-600">

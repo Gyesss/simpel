@@ -38,8 +38,25 @@ class InternshipApplication extends Model
         return $this->hasMany(GroupMember::class);
     }
 
+    /**
+     * All introduction letters belonging to this application.
+     */
+    public function introductionLetters()
+    {
+        return $this->hasMany(
+            IntroductionLetter::class,
+            'internship_application_id'
+        );
+    }
+
+    /**
+     * Get the latest introduction letter.
+     */
     public function introductionLetter()
     {
-        return $this->hasOne(IntroductionLetter::class);
+        return $this->hasOne(
+            IntroductionLetter::class,
+            'internship_application_id'
+        )->latestOfMany();
     }
 }
