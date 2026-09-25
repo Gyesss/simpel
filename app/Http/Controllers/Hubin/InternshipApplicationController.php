@@ -41,14 +41,26 @@ class InternshipApplicationController extends Controller
 
             $query->where(function ($query) use ($search) {
 
-                $query->where('application_code', 'like', "%{$search}%")
+                $query->where(
+                    'application_code',
+                    'like',
+                    "%{$search}%"
+                )
 
                     ->orWhereHas('leaderStudent', function ($query) use ($search) {
-                        $query->where('full_name', 'like', "%{$search}%");
+                        $query->where(
+                            'full_name',
+                            'like',
+                            "%{$search}%"
+                        );
                     })
 
                     ->orWhereHas('company', function ($query) use ($search) {
-                        $query->where('company_name', 'like', "%{$search}%");
+                        $query->where(
+                            'company_name',
+                            'like',
+                            "%{$search}%"
+                        );
                     });
             });
         }
@@ -70,6 +82,7 @@ class InternshipApplicationController extends Controller
             'leaderStudent',
             'company',
             'groupMembers.student',
+            'introductionLetter',
         ]);
 
         return view(
@@ -86,7 +99,10 @@ class InternshipApplicationController extends Controller
         if ($application->status !== 'submitted') {
             return redirect()
                 ->route('hubin.applications.show', $application)
-                ->with('error', 'Pengajuan ini sudah diproses sebelumnya.');
+                ->with(
+                    'error',
+                    'Pengajuan ini sudah diproses sebelumnya.'
+                );
         }
 
         $application->status = 'approved';
@@ -94,7 +110,10 @@ class InternshipApplicationController extends Controller
 
         return redirect()
             ->route('hubin.applications.show', $application)
-            ->with('success', 'Pengajuan PKL berhasil disetujui.');
+            ->with(
+                'success',
+                'Pengajuan PKL berhasil disetujui.'
+            );
     }
 
     /**
@@ -105,7 +124,10 @@ class InternshipApplicationController extends Controller
         if ($application->status !== 'submitted') {
             return redirect()
                 ->route('hubin.applications.show', $application)
-                ->with('error', 'Pengajuan ini sudah diproses sebelumnya.');
+                ->with(
+                    'error',
+                    'Pengajuan ini sudah diproses sebelumnya.'
+                );
         }
 
         $application->status = 'rejected';
@@ -113,7 +135,10 @@ class InternshipApplicationController extends Controller
 
         return redirect()
             ->route('hubin.applications.show', $application)
-            ->with('success', 'Pengajuan PKL berhasil ditolak.');
+            ->with(
+                'success',
+                'Pengajuan PKL berhasil ditolak.'
+            );
     }
 
     /**
@@ -121,10 +146,16 @@ class InternshipApplicationController extends Controller
      */
     public function resetStatus(InternshipApplication $application)
     {
-        if (! in_array($application->status, ['approved', 'rejected'])) {
+        if (! in_array(
+            $application->status,
+            ['approved', 'rejected']
+        )) {
             return redirect()
                 ->route('hubin.applications.show', $application)
-                ->with('error', 'Pengajuan ini masih dalam status menunggu proses.');
+                ->with(
+                    'error',
+                    'Pengajuan ini masih dalam status menunggu proses.'
+                );
         }
 
         $application->status = 'submitted';
@@ -132,6 +163,9 @@ class InternshipApplicationController extends Controller
 
         return redirect()
             ->route('hubin.applications.show', $application)
-            ->with('success', 'Status pengajuan berhasil dikembalikan ke Menunggu Proses.');
+            ->with(
+                'success',
+                'Status pengajuan berhasil dikembalikan ke Menunggu Proses.'
+            );
     }
 }

@@ -9,11 +9,6 @@ class InternshipApplication extends Model
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'application_code',
         'leader_student_id',
@@ -25,9 +20,6 @@ class InternshipApplication extends Model
         'response_letter_file',
     ];
 
-    /**
-     * Get the student who leads this application.
-     */
     public function leaderStudent()
     {
         return $this->belongsTo(
@@ -36,19 +28,18 @@ class InternshipApplication extends Model
         );
     }
 
-    /**
-     * Get the company for this application.
-     */
     public function company()
     {
         return $this->belongsTo(Company::class);
     }
 
-    /**
-     * Get the group members of this application.
-     */
     public function groupMembers()
     {
         return $this->hasMany(GroupMember::class);
+    }
+
+    public function introductionLetter()
+    {
+        return $this->hasOne(IntroductionLetter::class);
     }
 }

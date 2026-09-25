@@ -306,6 +306,26 @@ Route::middleware(['auth', 'role:hubin'])->group(function () {
         '/hubin/introduction-letters/{introductionLetter}',
         [HubinIntroductionLetterController::class, 'show']
     )->name('hubin.introduction-letters.show');
+
+    Route::patch(
+        '/hubin/introduction-letters/{introductionLetter}/issue',
+        [HubinIntroductionLetterController::class, 'issue']
+    )->name('hubin.introduction-letters.issue');
+
+    Route::patch(
+        '/hubin/introduction-letters/{introductionLetter}/suspend',
+        [HubinIntroductionLetterController::class, 'suspend']
+    )->name('hubin.introduction-letters.suspend');
+
+    Route::patch(
+        '/hubin/introduction-letters/{introductionLetter}/cancel',
+        [HubinIntroductionLetterController::class, 'cancel']
+    )->name('hubin.introduction-letters.cancel');
+
+    Route::patch(
+        '/hubin/introduction-letters/{introductionLetter}/restore',
+        [HubinIntroductionLetterController::class, 'restore']
+    )->name('hubin.introduction-letters.restore');
 });
 
 

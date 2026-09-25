@@ -25,7 +25,6 @@
 
         </div>
 
-
         <a
             href="{{ route('hubin.applications.index') }}"
             class="inline-flex items-center justify-center rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50">
@@ -35,7 +34,6 @@
         </a>
 
     </div>
-
 
     {{-- Notifications --}}
     @if (session('success'))
@@ -50,7 +48,6 @@
 
     @endif
 
-
     @if (session('error'))
 
     <div class="mb-6 rounded-2xl border border-red-200 bg-red-50 p-4">
@@ -63,13 +60,10 @@
 
     @endif
 
-
     <div class="grid gap-6 lg:grid-cols-3">
-
 
         {{-- Main Information --}}
         <div class="space-y-6 lg:col-span-2">
-
 
             {{-- Application Information --}}
             <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -79,7 +73,6 @@
                 </h2>
 
                 <div class="grid gap-5 md:grid-cols-2">
-
 
                     {{-- Application Code --}}
                     <div>
@@ -94,7 +87,6 @@
 
                     </div>
 
-
                     {{-- Application Date --}}
                     <div>
 
@@ -107,7 +99,6 @@
                         </p>
 
                     </div>
-
 
                     {{-- Company --}}
                     <div class="md:col-span-2">
@@ -130,7 +121,6 @@
 
                     </div>
 
-
                     {{-- Start Date --}}
                     <div>
 
@@ -143,7 +133,6 @@
                         </p>
 
                     </div>
-
 
                     {{-- End Date --}}
                     <div>
@@ -161,7 +150,6 @@
                 </div>
 
             </div>
-
 
             {{-- Leader --}}
             <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -208,7 +196,6 @@
 
             </div>
 
-
             {{-- Group Members --}}
             <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
 
@@ -223,7 +210,6 @@
                     </p>
 
                 </div>
-
 
                 @if ($application->groupMembers->isNotEmpty())
 
@@ -245,7 +231,6 @@
                             </p>
 
                         </div>
-
 
                         @if ($member->student_id === $application->leader_student_id)
 
@@ -273,10 +258,8 @@
 
         </div>
 
-
         {{-- Sidebar --}}
         <div class="space-y-6">
-
 
             {{-- Status --}}
             <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -284,7 +267,6 @@
                 <h2 class="mb-5 text-lg font-semibold text-slate-900">
                     Status Pengajuan
                 </h2>
-
 
                 {{-- Submitted --}}
                 @if ($application->status === 'submitted')
@@ -300,7 +282,6 @@
                     </p>
 
                 </div>
-
 
                 {{-- Approve --}}
                 <form
@@ -322,7 +303,6 @@
 
                 </form>
 
-
                 {{-- Reject --}}
                 <form
                     action="{{ route('hubin.applications.reject', $application) }}"
@@ -343,7 +323,6 @@
 
                 </form>
 
-
                 {{-- Approved --}}
                 @elseif ($application->status === 'approved')
 
@@ -358,7 +337,6 @@
                     </p>
 
                 </div>
-
 
                 {{-- Introduction Letter --}}
                 @if ($application->introductionLetter)
@@ -413,7 +391,6 @@
 
                 @endif
 
-
                 {{-- Reset Approved --}}
                 <form
                     action="{{ route('hubin.applications.reset-status', $application) }}"
@@ -434,7 +411,6 @@
 
                 </form>
 
-
                 {{-- Rejected --}}
                 @else
 
@@ -449,7 +425,6 @@
                     </p>
 
                 </div>
-
 
                 {{-- Reset Rejected --}}
                 <form
@@ -474,7 +449,6 @@
                 @endif
 
             </div>
-
 
             {{-- Company Summary --}}
             @if ($application->company)
