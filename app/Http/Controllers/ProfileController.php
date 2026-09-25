@@ -46,7 +46,7 @@ class ProfileController extends Controller
 
         $rules = [
             'full_name' => [
-                'nullable',
+                'required',
                 'string',
                 'max:255',
             ],
@@ -81,7 +81,43 @@ class ProfileController extends Controller
         }
 
 
-        $validated = $request->validate($rules);
+        /*
+        |--------------------------------------------------------------------------
+        | Validation Messages
+        |--------------------------------------------------------------------------
+        */
+
+        $messages = [
+            'full_name.required' =>
+            'Nama lengkap wajib diisi.',
+
+            'full_name.string' =>
+            'Nama lengkap harus berupa teks.',
+
+            'full_name.max' =>
+            'Nama lengkap maksimal 255 karakter.',
+
+            'email.email' =>
+            'Format email tidak valid.',
+
+            'email.max' =>
+            'Email maksimal 255 karakter.',
+
+            'email.unique' =>
+            'Email tersebut sudah digunakan oleh akun lain.',
+
+            'phone_number.max' =>
+            'Nomor telepon maksimal 20 karakter.',
+
+            'class.max' =>
+            'Kelas maksimal 50 karakter.',
+        ];
+
+
+        $validated = $request->validate(
+            $rules,
+            $messages
+        );
 
 
         /*
@@ -90,7 +126,7 @@ class ProfileController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $user->full_name = $validated['full_name'] ?? null;
+        $user->full_name = $validated['full_name'];
         $user->email = $validated['email'] ?? null;
         $user->phone_number = $validated['phone_number'] ?? null;
 
@@ -172,7 +208,6 @@ class ProfileController extends Controller
             $validated['current_password'],
             $user->password
         )) {
-
             throw ValidationException::withMessages([
                 'current_password' =>
                 'Password lama tidak sesuai.',

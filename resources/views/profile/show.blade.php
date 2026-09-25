@@ -77,6 +77,35 @@
 
                 </a>
 
+
+                {{-- Edit Company --}}
+                @if ($user->role === 'company' && $user->company)
+
+                <a
+                    href="{{ route('company.profile.edit') }}"
+                    class="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-2.5 text-sm font-semibold text-amber-700 transition hover:bg-amber-100">
+
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="h-5 w-5">
+
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M3.75 21h16.5M5.25 21V5.25A2.25 2.25 0 0 1 7.5 3h9a2.25 2.25 0 0 1 2.25 2.25V21M8.25 7.5h1.5m-1.5 3h1.5m4.5-3h1.5m-1.5 3h1.5M8.25 21v-3.75A2.25 2.25 0 0 1 10.5 15h3a2.25 2.25 0 0 1 2.25 2.25V21" />
+
+                    </svg>
+
+                    Edit Perusahaan
+
+                </a>
+
+                @endif
+
             </div>
 
         </div>

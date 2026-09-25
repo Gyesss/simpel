@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Company\CompanyProfileController;
 use App\Http\Controllers\Student\DashboardController;
 use App\Http\Controllers\Student\CompanyController;
 use App\Http\Controllers\Student\InternshipApplicationController;
@@ -247,6 +248,18 @@ Route::middleware(['auth', 'role:company'])->group(function () {
     Route::get('/company/dashboard', function () {
         return view('company.dashboard');
     })->name('company.dashboard');
+
+
+    // Company Profile
+    Route::get(
+        '/company/profile/edit',
+        [CompanyProfileController::class, 'edit']
+    )->name('company.profile.edit');
+
+    Route::put(
+        '/company/profile',
+        [CompanyProfileController::class, 'update']
+    )->name('company.profile.update');
 
 
     // Student Applications

@@ -178,6 +178,9 @@
                         id="full_name"
                         name="full_name"
                         value="{{ old('full_name', $user->full_name) }}"
+                        required
+                        maxlength="255"
+                        autocomplete="name"
                         class="mt-2 block w-full rounded-xl border-slate-300 px-4 py-3 text-sm shadow-sm focus:border-amber-500 focus:ring-amber-500">
 
                     @error('full_name')
@@ -207,6 +210,7 @@
                         id="class"
                         name="class"
                         value="{{ old('class', $user->class) }}"
+                        maxlength="50"
                         class="mt-2 block w-full rounded-xl border-slate-300 px-4 py-3 text-sm shadow-sm focus:border-amber-500 focus:ring-amber-500">
 
                     @error('class')
@@ -236,6 +240,8 @@
                         id="email"
                         name="email"
                         value="{{ old('email', $user->email) }}"
+                        maxlength="255"
+                        autocomplete="email"
                         class="mt-2 block w-full rounded-xl border-slate-300 px-4 py-3 text-sm shadow-sm focus:border-amber-500 focus:ring-amber-500">
 
                     @error('email')
@@ -263,6 +269,8 @@
                         id="phone_number"
                         name="phone_number"
                         value="{{ old('phone_number', $user->phone_number) }}"
+                        maxlength="20"
+                        autocomplete="tel"
                         class="mt-2 block w-full rounded-xl border-slate-300 px-4 py-3 text-sm shadow-sm focus:border-amber-500 focus:ring-amber-500">
 
                     @error('phone_number')
