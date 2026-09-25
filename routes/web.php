@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Company\CompanyProfileController;
 use App\Http\Controllers\Student\DashboardController;
+use App\Http\Controllers\Hubin\DashboardController as HubinDashboardController;
 use App\Http\Controllers\Student\CompanyController;
 use App\Http\Controllers\Student\InternshipApplicationController;
 use Illuminate\Support\Facades\Auth;
@@ -206,9 +207,10 @@ Route::middleware(['auth', 'role:student'])->group(function () {
 Route::middleware(['auth', 'role:hubin'])->group(function () {
 
     // Dashboard
-    Route::get('/hubin/dashboard', function () {
-        return view('hubin.dashboard');
-    })->name('hubin.dashboard');
+    Route::get(
+        '/hubin/dashboard',
+        [HubinDashboardController::class, 'index']
+    )->name('hubin.dashboard');
 
 
     // Company Management
