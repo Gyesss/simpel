@@ -9,6 +9,7 @@ use App\Http\Controllers\Student\CompanyController;
 use App\Http\Controllers\Hubin\CompanyController as HubinCompanyController;
 use App\Http\Controllers\Student\InternshipApplicationController;
 use App\Http\Controllers\Hubin\InternshipApplicationController as HubinInternshipApplicationController;
+use App\Http\Controllers\Hubin\IntroductionLetterController as HubinIntroductionLetterController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -284,6 +285,27 @@ Route::middleware(['auth', 'role:hubin'])->group(function () {
     Route::get('/hubin/supervisors', function () {
         return 'Halaman Pembimbing';
     })->name('hubin.supervisors.index');
+
+    // Letters
+    Route::get(
+        '/hubin/introduction-letters',
+        [HubinIntroductionLetterController::class, 'index']
+    )->name('hubin.introduction-letters.index');
+
+    Route::get(
+        '/hubin/introduction-letters/create/{application}',
+        [HubinIntroductionLetterController::class, 'create']
+    )->name('hubin.introduction-letters.create');
+
+    Route::post(
+        '/hubin/introduction-letters/{application}',
+        [HubinIntroductionLetterController::class, 'store']
+    )->name('hubin.introduction-letters.store');
+
+    Route::get(
+        '/hubin/introduction-letters/{introductionLetter}',
+        [HubinIntroductionLetterController::class, 'show']
+    )->name('hubin.introduction-letters.show');
 });
 
 

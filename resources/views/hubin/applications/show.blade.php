@@ -360,11 +360,65 @@
                 </div>
 
 
+                {{-- Introduction Letter --}}
+                @if ($application->introductionLetter)
+
+                <a
+                    href="{{ route('hubin.introduction-letters.show', $application->introductionLetter) }}"
+                    class="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800">
+
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        class="h-4 w-4">
+
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414A1 1 0 0 1 19 9.414V19a2 2 0 0 1-2 2Z" />
+
+                    </svg>
+
+                    Lihat Surat Pengantar
+
+                </a>
+
+                @else
+
+                <a
+                    href="{{ route('hubin.introduction-letters.create', $application) }}"
+                    class="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-amber-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-amber-600">
+
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        class="h-4 w-4">
+
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M12 4v16m8-8H4" />
+
+                    </svg>
+
+                    Buat Surat Pengantar
+
+                </a>
+
+                @endif
+
+
                 {{-- Reset Approved --}}
                 <form
                     action="{{ route('hubin.applications.reset-status', $application) }}"
                     method="POST"
-                    class="mt-4"
+                    class="mt-3"
                     onsubmit="return confirm('Kembalikan pengajuan ini ke status Menunggu Proses?');">
 
                     @csrf
