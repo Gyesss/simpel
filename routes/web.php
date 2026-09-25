@@ -6,6 +6,7 @@ use App\Http\Controllers\Company\CompanyProfileController;
 use App\Http\Controllers\Student\DashboardController;
 use App\Http\Controllers\Hubin\DashboardController as HubinDashboardController;
 use App\Http\Controllers\Student\CompanyController;
+use App\Http\Controllers\Hubin\CompanyController as HubinCompanyController;
 use App\Http\Controllers\Student\InternshipApplicationController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -214,9 +215,35 @@ Route::middleware(['auth', 'role:hubin'])->group(function () {
 
 
     // Company Management
-    Route::get('/hubin/companies', function () {
-        return 'Halaman Data Perusahaan';
-    })->name('hubin.companies.index');
+    Route::get(
+        '/hubin/companies',
+        [HubinCompanyController::class, 'index']
+    )->name('hubin.companies.index');
+
+    Route::get(
+        '/hubin/companies/create',
+        [HubinCompanyController::class, 'create']
+    )->name('hubin.companies.create');
+
+    Route::post(
+        '/hubin/companies',
+        [HubinCompanyController::class, 'store']
+    )->name('hubin.companies.store');
+
+    Route::get(
+        '/hubin/companies/{company}/edit',
+        [HubinCompanyController::class, 'edit']
+    )->name('hubin.companies.edit');
+
+    Route::put(
+        '/hubin/companies/{company}',
+        [HubinCompanyController::class, 'update']
+    )->name('hubin.companies.update');
+
+    Route::delete(
+        '/hubin/companies/{company}',
+        [HubinCompanyController::class, 'destroy']
+    )->name('hubin.companies.destroy');
 
 
     // PKL Applications
