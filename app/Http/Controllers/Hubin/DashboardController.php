@@ -19,7 +19,7 @@ class DashboardController extends Controller
 
         $pendingApplications = InternshipApplication::where(
             'status',
-            'pending'
+            'submitted'
         )->count();
 
         $recentApplications = InternshipApplication::with([

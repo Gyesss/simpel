@@ -8,6 +8,7 @@ use App\Http\Controllers\Hubin\DashboardController as HubinDashboardController;
 use App\Http\Controllers\Student\CompanyController;
 use App\Http\Controllers\Hubin\CompanyController as HubinCompanyController;
 use App\Http\Controllers\Student\InternshipApplicationController;
+use App\Http\Controllers\Hubin\InternshipApplicationController as HubinInternshipApplicationController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -247,9 +248,30 @@ Route::middleware(['auth', 'role:hubin'])->group(function () {
 
 
     // PKL Applications
-    Route::get('/hubin/applications', function () {
-        return 'Halaman Pengajuan PKL';
-    })->name('hubin.applications.index');
+    Route::get(
+        '/hubin/applications',
+        [HubinInternshipApplicationController::class, 'index']
+    )->name('hubin.applications.index');
+
+    Route::get(
+        '/hubin/applications/{application}',
+        [HubinInternshipApplicationController::class, 'show']
+    )->name('hubin.applications.show');
+
+    Route::patch(
+        '/hubin/applications/{application}/approve',
+        [HubinInternshipApplicationController::class, 'approve']
+    )->name('hubin.applications.approve');
+
+    Route::patch(
+        '/hubin/applications/{application}/reject',
+        [HubinInternshipApplicationController::class, 'reject']
+    )->name('hubin.applications.reject');
+
+    Route::patch(
+        '/hubin/applications/{application}/reset-status',
+        [HubinInternshipApplicationController::class, 'resetStatus']
+    )->name('hubin.applications.reset-status');
 
 
     // Introduction Letters
