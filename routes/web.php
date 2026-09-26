@@ -304,13 +304,6 @@ Route::middleware(['auth', 'role:hubin'])->group(function () {
     )->name('hubin.introduction-letters.show');
 
 
-    // Introduction Letter PDF
-    Route::get(
-        '/hubin/introduction-letters/{introductionLetter}/pdf',
-        [HubinIntroductionLetterController::class, 'previewPdf']
-    )->name('hubin.introduction-letters.pdf');
-
-
     // Introduction Letter Status
     Route::patch(
         '/hubin/introduction-letters/{introductionLetter}/issue',
@@ -337,6 +330,29 @@ Route::middleware(['auth', 'role:hubin'])->group(function () {
     Route::get('/hubin/supervisors', function () {
         return 'Halaman Pembimbing belum dapat digunakan: Ini adalah target pengembangan masa depan!';
     })->name('hubin.supervisors.index');
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| Introduction Letter PDF
+|--------------------------------------------------------------------------
+|
+| This route is intentionally outside the role:hubin middleware.
+|
+| Access control is handled inside previewPdf():
+| - Hubin
+| - Related company
+| - Related student
+|
+*/
+
+Route::middleware('auth')->group(function () {
+
+    Route::get(
+        '/hubin/introduction-letters/{introductionLetter}/pdf',
+        [HubinIntroductionLetterController::class, 'previewPdf']
+    )->name('hubin.introduction-letters.pdf');
 });
 
 

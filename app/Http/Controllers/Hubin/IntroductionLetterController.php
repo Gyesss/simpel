@@ -327,27 +327,26 @@ class IntroductionLetterController extends Controller
 
     /**
      * Generate and display the introduction letter as PDF.
+     *
+     * Accessible by:
+     * - Hubin
+     * - The company related to the application
+     * - The leader student
+     * - Group members
      */
     public function previewPdf(
+        Request $request,
         IntroductionLetter $introductionLetter
     ) {
         /*
         |--------------------------------------------------------------------------
-        | PDF hanya dapat dibuat untuk surat yang sudah diterbitkan
+        | PDF hanya dapat dilihat untuk surat yang sudah diterbitkan
         |--------------------------------------------------------------------------
         */
 
         if ($introductionLetter->status !== 'issued') {
 
-            return redirect()
-                ->route(
-                    'hubin.introduction-letters.show',
-                    $introductionLetter
-                )
-                ->with(
-                    'error',
-                    'PDF hanya dapat dibuat untuk surat yang sudah diterbitkan.'
-                );
+            abort(404);
         }
 
         /*
@@ -361,6 +360,83 @@ class IntroductionLetterController extends Controller
             'internshipApplication.company',
             'internshipApplication.groupMembers.student',
         ]);
+
+        $application = $introductionLetter->internshipApplication;
+
+        /*
+        |--------------------------------------------------------------------------
+        | Authorization
+        |--------------------------------------------------------------------------
+        */
+
+        $user = $request->user();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Hubin
+        |--------------------------------------------------------------------------
+        |
+        | Hubin dapat melihat semua surat pengantar yang sudah diterbitkan.
+        |
+        */
+
+        if ($user->role === 'hubin') {
+            // Allowed.
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Company
+        |--------------------------------------------------------------------------
+        |
+        | Company hanya dapat melihat surat yang ditujukan kepada
+        | perusahaan miliknya.
+        |
+        */ elseif ($user->role === 'company') {
+
+            if (! $user->company) {
+                abort(403);
+            }
+
+            if ($application->company_id !== $user->company->id) {
+                abort(403);
+            }
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Student
+        |--------------------------------------------------------------------------
+        |
+        | Student dapat melihat surat apabila:
+        |
+        | 1. Student adalah ketua pengajuan
+        | 2. Student merupakan anggota kelompok
+        |
+        */ elseif ($user->role === 'student') {
+
+            $isLeader =
+                $application->leader_student_id === $user->id;
+
+            $isGroupMember = $application
+                ->groupMembers
+                ->contains(
+                    'student_id',
+                    $user->id
+                );
+
+            if (! $isLeader && ! $isGroupMember) {
+                abort(403);
+            }
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Other Roles
+        |--------------------------------------------------------------------------
+        */ else {
+            abort(403);
+        }
 
         /*
         |--------------------------------------------------------------------------

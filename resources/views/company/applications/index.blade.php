@@ -56,8 +56,11 @@
         </p>
     </div>
     @else
+
     <div class="space-y-4">
+
         @foreach ($applications as $application)
+
         @php
         $isExpired = $application->internship_end_date->isPast();
 
@@ -87,9 +90,12 @@
 
             {{-- Header --}}
             <div class="border-b border-slate-100 px-6 py-5">
+
                 <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+
                     <div>
                         <div class="flex flex-wrap items-center gap-2">
+
                             <span class="{{ $isExpired ? 'bg-slate-200 text-slate-600' : 'bg-amber-100 text-amber-700' }} rounded-full px-3 py-1 text-xs font-semibold">
                                 {{ $isGroup ? 'Kelompok' : 'Individual' }}
                             </span>
@@ -103,6 +109,7 @@
                                 PKL Selesai
                             </span>
                             @endif
+
                         </div>
 
                         <h2 class="mt-3 text-lg font-bold text-slate-900">
@@ -111,6 +118,7 @@
 
                         <p class="mt-1 text-sm text-slate-500">
                             Ketua pengajuan
+
                             @if ($application->leaderStudent->class)
                             · {{ $application->leaderStudent->class }}
                             @endif
@@ -118,6 +126,7 @@
                     </div>
 
                     <div class="text-left sm:text-right">
+
                         <p class="text-xs font-medium uppercase tracking-wide text-slate-400">
                             Periode PKL
                         </p>
@@ -133,15 +142,22 @@
                             Periode telah berakhir
                         </p>
                         @endif
+
                     </div>
+
                 </div>
+
             </div>
 
             {{-- Members --}}
             <div class="px-6 py-5">
+
                 @if ($isGroup)
+
                 <div>
+
                     <div class="mb-3 flex items-center justify-between">
+
                         <h3 class="text-sm font-semibold text-slate-900">
                             Anggota Kelompok
                         </h3>
@@ -149,34 +165,43 @@
                         <span class="text-xs text-slate-400">
                             {{ $members->count() + 1 }} siswa
                         </span>
+
                     </div>
 
                     <div class="space-y-2">
 
                         {{-- Leader --}}
                         <div class="{{ $isExpired ? 'border-slate-200 bg-slate-100' : 'border-amber-200 bg-amber-50' }} rounded-xl border px-4 py-3">
+
                             <div class="flex items-center gap-3">
+
                                 <div class="{{ $isExpired ? 'bg-slate-200 text-slate-600' : 'bg-amber-200 text-amber-700' }} flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold">
                                     {{ $leaderInitials }}
                                 </div>
 
                                 <div class="min-w-0">
+
                                     <p class="truncate text-sm font-semibold text-slate-900">
                                         {{ $application->leaderStudent->full_name }}
                                     </p>
 
                                     <p class="text-xs {{ $isExpired ? 'text-slate-500' : 'text-amber-700' }}">
                                         Ketua kelompok
+
                                         @if ($application->leaderStudent->class)
                                         · {{ $application->leaderStudent->class }}
                                         @endif
                                     </p>
+
                                 </div>
+
                             </div>
+
                         </div>
 
                         {{-- Members --}}
                         @foreach ($members as $member)
+
                         @php
                         $memberName = trim($member->student->full_name);
                         $memberNameParts = preg_split('/\s+/', $memberName);
@@ -190,29 +215,39 @@
                         @endphp
 
                         <div class="rounded-xl border border-slate-200 bg-slate-100 px-4 py-3">
+
                             <div class="flex items-center gap-3">
+
                                 <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-200 text-sm font-semibold text-slate-600">
                                     {{ $memberInitials }}
                                 </div>
 
                                 <div class="min-w-0">
+
                                     <p class="truncate text-sm font-semibold text-slate-800">
                                         {{ $member->student->full_name }}
                                     </p>
 
                                     <p class="text-xs text-slate-500">
                                         Anggota
+
                                         @if ($member->student->class)
                                         · {{ $member->student->class }}
                                         @endif
                                     </p>
+
                                 </div>
+
                             </div>
+
                         </div>
+
                         @endforeach
 
                     </div>
+
                 </div>
+
                 @else
 
                 @php
@@ -229,12 +264,15 @@
 
                 {{-- Individual --}}
                 <div class="rounded-xl border border-slate-200 bg-slate-100 px-4 py-3">
+
                     <div class="flex items-center gap-3">
+
                         <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-200 text-sm font-semibold text-slate-600">
                             {{ $studentInitials }}
                         </div>
 
                         <div class="min-w-0">
+
                             <p class="text-xs font-medium uppercase tracking-wide text-slate-400">
                                 Siswa
                             </p>
@@ -248,10 +286,15 @@
                                 {{ $application->leaderStudent->class }}
                             </p>
                             @endif
+
                         </div>
+
                     </div>
+
                 </div>
+
                 @endif
+
             </div>
 
             {{-- Footer --}}
@@ -261,6 +304,28 @@
 
                     {{-- Information --}}
                     <div class="flex flex-wrap items-center gap-2 text-xs">
+
+                        {{-- View Introduction Letter --}}
+                        <a
+                            href="{{ route('hubin.introduction-letters.pdf', $application->introductionLetter) }}"
+                            target="_blank"
+                            class="inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-white px-3 py-2 text-xs font-semibold text-blue-700 transition hover:bg-blue-50">
+
+                            <svg
+                                class="h-4 w-4"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="1.8">
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+
+                            Lihat Surat Pengantar
+                        </a>
+
                         <span class="rounded-full bg-emerald-100 px-3 py-1 font-medium text-emerald-700">
                             Hubin: Disetujui
                         </span>
@@ -274,6 +339,7 @@
                             Periode Berakhir
                         </span>
                         @endif
+
                     </div>
 
                     {{-- Company Response --}}
@@ -292,6 +358,7 @@
                                 method="POST"
                                 action="{{ route('company.applications.accept', $application) }}"
                                 onsubmit="return confirm('Terima pengajuan PKL ini?')">
+
                                 @csrf
                                 @method('PATCH')
 
@@ -300,6 +367,7 @@
                                     class="rounded-lg bg-emerald-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-emerald-700">
                                     Terima
                                 </button>
+
                             </form>
 
                             {{-- Reject --}}
@@ -307,6 +375,7 @@
                                 method="POST"
                                 action="{{ route('company.applications.reject', $application) }}"
                                 onsubmit="return confirm('Tolak pengajuan PKL ini?')">
+
                                 @csrf
                                 @method('PATCH')
 
@@ -315,6 +384,7 @@
                                     class="rounded-lg bg-red-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-red-700">
                                     Tolak
                                 </button>
+
                             </form>
 
                         </div>
@@ -329,6 +399,7 @@
                             method="POST"
                             action="{{ route('company.applications.withdraw', $application) }}"
                             onsubmit="return confirm('Batalkan respons diterima untuk pengajuan ini?')">
+
                             @csrf
                             @method('PATCH')
 
@@ -337,6 +408,7 @@
                                 class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-xs font-semibold text-slate-600 transition hover:bg-slate-100">
                                 Batalkan Respons
                             </button>
+
                         </form>
 
                         @elseif ($companyResponse->status === 'rejected')
@@ -349,6 +421,7 @@
                             method="POST"
                             action="{{ route('company.applications.withdraw', $application) }}"
                             onsubmit="return confirm('Batalkan respons ditolak untuk pengajuan ini?')">
+
                             @csrf
                             @method('PATCH')
 
@@ -357,6 +430,7 @@
                                 class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-xs font-semibold text-slate-600 transition hover:bg-slate-100">
                                 Batalkan Respons
                             </button>
+
                         </form>
 
                         @else
@@ -368,12 +442,19 @@
                         @endif
 
                     </div>
+
                 </div>
+
             </div>
+
         </div>
+
         @endforeach
+
     </div>
+
     @endif
 
 </div>
+
 @endsection
