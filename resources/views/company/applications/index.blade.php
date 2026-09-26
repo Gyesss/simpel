@@ -42,7 +42,7 @@
                 <path
                     stroke-linecap="round"
                     stroke-linejoin="round"
-                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
         </div>
 
@@ -79,6 +79,8 @@
         $member->student->id !== $application->leader_student_id
         )
         ->values();
+
+        $companyResponse = $application->companyResponse;
         @endphp
 
         <div class="{{ $isExpired ? 'border-slate-200 bg-slate-50/70' : 'border-slate-200 bg-white' }} overflow-hidden rounded-2xl border shadow-sm">
@@ -253,35 +255,119 @@
             </div>
 
             {{-- Footer --}}
-            <div class="flex flex-col gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
+            <div class="border-t border-slate-100 bg-slate-50 px-6 py-4">
 
-                <div class="flex flex-wrap items-center gap-2 text-xs">
-                    <span class="rounded-full bg-emerald-100 px-3 py-1 font-medium text-emerald-700">
-                        Hubin: Disetujui
-                    </span>
+                <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
 
-                    <span class="rounded-full bg-blue-100 px-3 py-1 font-medium text-blue-700">
-                        Surat Pengantar: Diterbitkan
-                    </span>
+                    {{-- Information --}}
+                    <div class="flex flex-wrap items-center gap-2 text-xs">
+                        <span class="rounded-full bg-emerald-100 px-3 py-1 font-medium text-emerald-700">
+                            Hubin: Disetujui
+                        </span>
 
-                    @if ($isExpired)
-                    <span class="rounded-full bg-slate-200 px-3 py-1 font-medium text-slate-600">
-                        Periode Berakhir
-                    </span>
-                    @endif
-                </div>
+                        <span class="rounded-full bg-blue-100 px-3 py-1 font-medium text-blue-700">
+                            Surat Pengantar: Diterbitkan
+                        </span>
 
-                <div>
-                    @if ($application->companyResponse)
-                    <span class="rounded-lg bg-slate-100 px-3 py-2 text-xs font-medium text-slate-600">
-                        Respons:
-                        {{ ucfirst($application->companyResponse->status) }}
-                    </span>
-                    @else
-                    <span class="rounded-lg bg-amber-100 px-3 py-2 text-xs font-medium text-amber-700">
-                        Belum direspons
-                    </span>
-                    @endif
+                        @if ($isExpired)
+                        <span class="rounded-full bg-slate-200 px-3 py-1 font-medium text-slate-600">
+                            Periode Berakhir
+                        </span>
+                        @endif
+                    </div>
+
+                    {{-- Company Response --}}
+                    <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+
+                        @if (! $companyResponse || $companyResponse->status === 'withdrawn')
+
+                        <span class="rounded-lg bg-amber-100 px-3 py-2 text-xs font-medium text-amber-700">
+                            Belum direspons
+                        </span>
+
+                        <div class="flex gap-2">
+
+                            {{-- Accept --}}
+                            <form
+                                method="POST"
+                                action="{{ route('company.applications.accept', $application) }}"
+                                onsubmit="return confirm('Terima pengajuan PKL ini?')">
+                                @csrf
+                                @method('PATCH')
+
+                                <button
+                                    type="submit"
+                                    class="rounded-lg bg-emerald-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-emerald-700">
+                                    Terima
+                                </button>
+                            </form>
+
+                            {{-- Reject --}}
+                            <form
+                                method="POST"
+                                action="{{ route('company.applications.reject', $application) }}"
+                                onsubmit="return confirm('Tolak pengajuan PKL ini?')">
+                                @csrf
+                                @method('PATCH')
+
+                                <button
+                                    type="submit"
+                                    class="rounded-lg bg-red-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-red-700">
+                                    Tolak
+                                </button>
+                            </form>
+
+                        </div>
+
+                        @elseif ($companyResponse->status === 'accepted')
+
+                        <span class="rounded-lg bg-emerald-100 px-3 py-2 text-xs font-semibold text-emerald-700">
+                            Respons: Diterima
+                        </span>
+
+                        <form
+                            method="POST"
+                            action="{{ route('company.applications.withdraw', $application) }}"
+                            onsubmit="return confirm('Batalkan respons diterima untuk pengajuan ini?')">
+                            @csrf
+                            @method('PATCH')
+
+                            <button
+                                type="submit"
+                                class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-xs font-semibold text-slate-600 transition hover:bg-slate-100">
+                                Batalkan Respons
+                            </button>
+                        </form>
+
+                        @elseif ($companyResponse->status === 'rejected')
+
+                        <span class="rounded-lg bg-red-100 px-3 py-2 text-xs font-semibold text-red-700">
+                            Respons: Ditolak
+                        </span>
+
+                        <form
+                            method="POST"
+                            action="{{ route('company.applications.withdraw', $application) }}"
+                            onsubmit="return confirm('Batalkan respons ditolak untuk pengajuan ini?')">
+                            @csrf
+                            @method('PATCH')
+
+                            <button
+                                type="submit"
+                                class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-xs font-semibold text-slate-600 transition hover:bg-slate-100">
+                                Batalkan Respons
+                            </button>
+                        </form>
+
+                        @else
+
+                        <span class="rounded-lg bg-slate-100 px-3 py-2 text-xs font-medium text-slate-600">
+                            Respons: {{ ucfirst($companyResponse->status) }}
+                        </span>
+
+                        @endif
+
+                    </div>
                 </div>
             </div>
         </div>

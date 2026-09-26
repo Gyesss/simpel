@@ -372,12 +372,25 @@ Route::middleware(['auth', 'role:company'])->group(function () {
         [CompanyInternshipApplicationController::class, 'index']
     )->name('company.applications.index');
 
+    Route::patch(
+        '/company/applications/{application}/accept',
+        [CompanyInternshipApplicationController::class, 'accept']
+    )->name('company.applications.accept');
+
+    Route::patch(
+        '/company/applications/{application}/reject',
+        [CompanyInternshipApplicationController::class, 'reject']
+    )->name('company.applications.reject');
+
+    Route::patch(
+        '/company/applications/{application}/withdraw',
+        [CompanyInternshipApplicationController::class, 'withdraw']
+    )->name('company.applications.withdraw');
+
 
     // Accepted Students
     Route::get(
         '/company/accepted-students',
-        function () {
-            return 'Halaman Siswa Diterima';
-        }
+        [CompanyInternshipApplicationController::class, 'acceptedStudents']
     )->name('company.accepted-students.index');
 });
