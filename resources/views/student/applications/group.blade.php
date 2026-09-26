@@ -47,6 +47,57 @@
 
     </div>
 
+    {{-- Validation Errors --}}
+    @if ($errors->any())
+
+    <div class="mb-6 rounded-2xl border border-red-200 bg-red-50 p-4">
+
+        <div class="flex gap-3">
+
+            <div class="mt-0.5 shrink-0 text-red-600">
+
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.8"
+                    stroke="currentColor"
+                    class="h-5 w-5">
+
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 9v3.75m0 3.75h.007v.007H12v-.007ZM3.75 19.5h16.5L12 4.5 3.75 19.5Z" />
+
+                </svg>
+
+            </div>
+
+            <div>
+
+                <p class="text-sm font-semibold text-red-800">
+                    Pengajuan tidak dapat dibuat.
+                </p>
+
+                <ul class="mt-2 space-y-1 text-sm text-red-700">
+
+                    @foreach ($errors->all() as $error)
+
+                    <li>
+                        {{ $error }}
+                    </li>
+
+                    @endforeach
+
+                </ul>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    @endif
 
     {{-- Application Form --}}
     <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
