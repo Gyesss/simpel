@@ -2,14 +2,19 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Company\CompanyProfileController;
+
 use App\Http\Controllers\Student\DashboardController;
-use App\Http\Controllers\Hubin\DashboardController as HubinDashboardController;
 use App\Http\Controllers\Student\CompanyController;
-use App\Http\Controllers\Hubin\CompanyController as HubinCompanyController;
 use App\Http\Controllers\Student\InternshipApplicationController;
+
+use App\Http\Controllers\Hubin\DashboardController as HubinDashboardController;
+use App\Http\Controllers\Hubin\CompanyController as HubinCompanyController;
 use App\Http\Controllers\Hubin\InternshipApplicationController as HubinInternshipApplicationController;
 use App\Http\Controllers\Hubin\IntroductionLetterController as HubinIntroductionLetterController;
+
+use App\Http\Controllers\Company\CompanyProfileController;
+use App\Http\Controllers\Company\InternshipApplicationController as CompanyInternshipApplicationController;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -101,8 +106,10 @@ Route::middleware(['auth', 'role:student'])->group(function () {
 
 
     // Company Catalog
-    Route::get('/student/companies', [CompanyController::class, 'index'])
-        ->name('student.companies.index');
+    Route::get(
+        '/student/companies',
+        [CompanyController::class, 'index']
+    )->name('student.companies.index');
 
 
     // PKL Application
@@ -276,17 +283,6 @@ Route::middleware(['auth', 'role:hubin'])->group(function () {
 
 
     // Introduction Letters
-    Route::get('/hubin/introduction-letters', function () {
-        return 'Halaman Surat Pengantar';
-    })->name('hubin.introduction-letters.index');
-
-
-    // Supervisors
-    Route::get('/hubin/supervisors', function () {
-        return 'Halaman Pembimbing';
-    })->name('hubin.supervisors.index');
-
-    // Letters
     Route::get(
         '/hubin/introduction-letters',
         [HubinIntroductionLetterController::class, 'index']
@@ -307,21 +303,15 @@ Route::middleware(['auth', 'role:hubin'])->group(function () {
         [HubinIntroductionLetterController::class, 'show']
     )->name('hubin.introduction-letters.show');
 
-    Route::get(
-        '/hubin/introduction-letters/{introductionLetter}/pdf',
-        [HubinIntroductionLetterController::class, 'pdf']
-    )->name('hubin.introduction-letters.pdf');
 
+    // Introduction Letter PDF
     Route::get(
         '/hubin/introduction-letters/{introductionLetter}/pdf',
         [HubinIntroductionLetterController::class, 'previewPdf']
     )->name('hubin.introduction-letters.pdf');
 
-    Route::get(
-        '/hubin/introduction-letters/{introductionLetter}/pdf/download',
-        [HubinIntroductionLetterController::class, 'downloadPdf']
-    )->name('hubin.introduction-letters.pdf.download');
 
+    // Introduction Letter Status
     Route::patch(
         '/hubin/introduction-letters/{introductionLetter}/issue',
         [HubinIntroductionLetterController::class, 'issue']
@@ -341,6 +331,12 @@ Route::middleware(['auth', 'role:hubin'])->group(function () {
         '/hubin/introduction-letters/{introductionLetter}/restore',
         [HubinIntroductionLetterController::class, 'restore']
     )->name('hubin.introduction-letters.restore');
+
+
+    // Supervisors
+    Route::get('/hubin/supervisors', function () {
+        return 'Halaman Pembimbing belum dapat digunakan: Ini adalah target pengembangan masa depan!';
+    })->name('hubin.supervisors.index');
 });
 
 
@@ -371,13 +367,17 @@ Route::middleware(['auth', 'role:company'])->group(function () {
 
 
     // Student Applications
-    Route::get('/company/applications', function () {
-        return 'Halaman Lamaran Siswa';
-    })->name('company.applications.index');
+    Route::get(
+        '/company/applications',
+        [CompanyInternshipApplicationController::class, 'index']
+    )->name('company.applications.index');
 
 
     // Accepted Students
-    Route::get('/company/accepted-students', function () {
-        return 'Halaman Siswa Diterima';
-    })->name('company.accepted-students.index');
+    Route::get(
+        '/company/accepted-students',
+        function () {
+            return 'Halaman Siswa Diterima';
+        }
+    )->name('company.accepted-students.index');
 });

@@ -664,42 +664,6 @@
 
             </a>
 
-            {{-- Print PDF --}}
-            <a
-                href="{{ route('hubin.introduction-letters.pdf', $introductionLetter) }}"
-                target="_blank"
-                rel="noopener"
-                class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 sm:w-auto">
-
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    class="h-4 w-4">
-
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M6.75 8.25V4.5h10.5v3.75" />
-
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M6 18.75h12v-6H6v6Z" />
-
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M6 15H4.5A1.5 1.5 0 0 1 3 13.5v-3A1.5 1.5 0 0 1 4.5 9h15A1.5 1.5 0 0 1 21 10.5v3a1.5 1.5 0 0 1-1.5 1.5H18" />
-
-                </svg>
-
-                Cetak PDF
-
-            </a>
-
             {{-- Suspend --}}
             <button
                 type="button"

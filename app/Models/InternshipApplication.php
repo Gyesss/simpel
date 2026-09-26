@@ -20,6 +20,12 @@ class InternshipApplication extends Model
         'response_letter_file',
     ];
 
+    protected $casts = [
+        'application_date' => 'date',
+        'internship_start_date' => 'date',
+        'internship_end_date' => 'date',
+    ];
+
     public function leaderStudent()
     {
         return $this->belongsTo(
@@ -58,5 +64,16 @@ class InternshipApplication extends Model
             IntroductionLetter::class,
             'internship_application_id'
         )->latestOfMany();
+    }
+
+    /**
+     * Get the company's response to this application.
+     */
+    public function companyResponse()
+    {
+        return $this->hasOne(
+            CompanyResponse::class,
+            'internship_application_id'
+        );
     }
 }
