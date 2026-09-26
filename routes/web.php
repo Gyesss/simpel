@@ -6,6 +6,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Student\DashboardController;
 use App\Http\Controllers\Student\CompanyController;
 use App\Http\Controllers\Student\InternshipApplicationController;
+use App\Http\Controllers\Student\ResponseLetterController;
 
 use App\Http\Controllers\Hubin\DashboardController as HubinDashboardController;
 use App\Http\Controllers\Hubin\CompanyController as HubinCompanyController;
@@ -202,9 +203,10 @@ Route::middleware(['auth', 'role:student'])->group(function () {
 
 
     // Response Letter
-    Route::get('/student/response-letter', function () {
-        return 'Halaman Surat Balasan';
-    })->name('student.response-letter');
+    Route::get(
+        '/student/response-letter',
+        [ResponseLetterController::class, 'index']
+    )->name('student.response-letter');
 });
 
 

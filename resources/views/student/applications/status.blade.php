@@ -70,6 +70,7 @@
         @foreach ($applications as $application)
 
         @php
+
         $isLeader = $application->leader_student_id === auth()->id();
 
         $isGroup = $application->groupMembers->isNotEmpty();
@@ -87,6 +88,42 @@
         $availableQuota = $application->company->available_quota;
 
         $quotaExceeded = $totalStudents > $availableQuota;
+
+        $companyResponse = $application->companyResponse;
+
+        /*
+        * Step 3 icon color.
+        *
+        * Default:
+        * Waiting / inactive
+        *
+        * Approved:
+        * Company accepted the application
+        *
+        * Rejected:
+        * Company rejected the application
+        *
+        * Withdrawn:
+        * Company withdrew its previous response
+        */
+        $responseIconClass = 'bg-slate-100 text-slate-400';
+
+        if ($application->status === 'approved') {
+        $responseIconClass = 'bg-amber-100 text-amber-600';
+        }
+
+        if ($companyResponse?->status === 'accepted') {
+        $responseIconClass = 'bg-emerald-100 text-emerald-600';
+        }
+
+        if ($companyResponse?->status === 'rejected') {
+        $responseIconClass = 'bg-red-100 text-red-600';
+        }
+
+        if ($companyResponse?->status === 'withdrawn') {
+        $responseIconClass = 'bg-slate-100 text-slate-500';
+        }
+
         @endphp
 
         <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -228,6 +265,7 @@
                         </button>
 
                     </form>
+
 
                     {{-- Group Member Actions --}}
                     @elseif (
@@ -444,7 +482,7 @@
                                 <path
                                     stroke-linecap="round"
                                     stroke-linejoin="round"
-                                    d="M15.75 6.75a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1-7.5 0 3.75 3.75 0 0 1 0 0ZM4.5 20.25a7.5 7.5 0 0 1 15 0" />
+                                    d="M15.75 6.75a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 1 1-7.5 0ZM4.5 20.25a7.5 7.5 0 0 1 15 0" />
 
                             </svg>
 
@@ -516,7 +554,7 @@
 
                 <div class="mt-5 space-y-5">
 
-                    {{-- Submitted --}}
+                    {{-- Step 1: Submitted --}}
                     <div class="flex gap-3">
 
                         <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-600">
@@ -553,15 +591,24 @@
                     </div>
 
 
-                    {{-- Hubin Approval --}}
+                    {{-- Step 2: Hubin Approval --}}
+                    @php
+
+                    $hubinIconClass = 'bg-slate-100 text-slate-400';
+
+                    if ($application->status === 'approved') {
+                    $hubinIconClass = 'bg-emerald-100 text-emerald-600';
+                    }
+
+                    if ($application->status === 'rejected') {
+                    $hubinIconClass = 'bg-red-100 text-red-600';
+                    }
+
+                    @endphp
+
                     <div class="flex gap-3">
 
-                        <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full
-                                    {{ $application->status === 'approved'
-                                        ? 'bg-emerald-100 text-emerald-600'
-                                        : ($application->status === 'rejected'
-                                            ? 'bg-red-100 text-red-600'
-                                            : 'bg-slate-100 text-slate-400') }}">
+                        <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full {{ $hubinIconClass }}">
 
                             @if ($application->status === 'approved')
 
@@ -636,26 +683,109 @@
                     </div>
 
 
-                    {{-- Response Letter --}}
+                    {{-- Step 3: Company Response --}}
                     <div class="flex gap-3">
 
-                        <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+                        <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full {{ $responseIconClass }}">
+
+                            @if ($companyResponse?->status === 'accepted')
+
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="2"
+                                stroke="currentColor"
+                                class="h-4 w-4">
+
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="m5 12 4 4L19 6" />
+
+                            </svg>
+
+                            @elseif ($companyResponse?->status === 'rejected')
+
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="2"
+                                stroke="currentColor"
+                                class="h-4 w-4">
+
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M6 18 18 6M6 6l12 12" />
+
+                            </svg>
+
+                            @elseif ($companyResponse?->status === 'withdrawn')
+
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="2"
+                                stroke="currentColor"
+                                class="h-4 w-4">
+
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M6 18 18 6M6 6l12 12" />
+
+                            </svg>
+
+                            @else
 
                             <span class="text-xs font-bold">
                                 3
                             </span>
+
+                            @endif
 
                         </div>
 
                         <div>
 
                             <p class="text-sm font-medium text-slate-800">
-                                Surat Balasan Industri
+                                Respons Perusahaan
                             </p>
 
                             <p class="mt-0.5 text-xs text-slate-500">
-                                Upload surat balasan setelah mendapatkan
-                                konfirmasi dari perusahaan.
+
+                                @if ($application->status !== 'approved')
+
+                                Respons perusahaan belum dapat diberikan
+                                sebelum pengajuan disetujui Hubin.
+
+                                @elseif (! $companyResponse)
+
+                                Pengajuan telah disetujui Hubin dan
+                                sedang menunggu respons perusahaan.
+
+                                @elseif ($companyResponse->status === 'pending')
+
+                                Perusahaan belum memberikan keputusan
+                                terhadap pengajuan PKL.
+
+                                @elseif ($companyResponse->status === 'accepted')
+
+                                Pengajuan PKL telah diterima oleh perusahaan.
+
+                                @elseif ($companyResponse->status === 'rejected')
+
+                                Pengajuan PKL ditolak oleh perusahaan.
+
+                                @elseif ($companyResponse->status === 'withdrawn')
+
+                                Respons perusahaan sebelumnya telah dibatalkan.
+
+                                @endif
+
                             </p>
 
                         </div>
