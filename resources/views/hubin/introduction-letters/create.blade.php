@@ -210,7 +210,7 @@
                     </p>
 
                     <p class="mt-1 text-sm text-amber-600">
-                        {{ $application->groupMembers->count() }} anggota
+                        {{ $application->groupMembers->count() + 1 }} anggota
                     </p>
 
                     @else
@@ -237,7 +237,40 @@
 
             <div class="mt-3 grid gap-2 sm:grid-cols-2">
 
+                {{-- Leader --}}
+                @if ($application->leaderStudent)
+
+                <div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
+
+                    <div class="flex items-center justify-between gap-3">
+
+                        <div>
+
+                            <p class="text-sm font-medium text-slate-800">
+                                {{ $application->leaderStudent->full_name }}
+                            </p>
+
+                            <p class="mt-1 text-xs text-slate-500">
+                                {{ $application->leaderStudent->class ?? '-' }}
+                            </p>
+
+                        </div>
+
+                        <span class="shrink-0 rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-700">
+                            Ketua
+                        </span>
+
+                    </div>
+
+                </div>
+
+                @endif
+
+
+                {{-- Other Members --}}
                 @foreach ($application->groupMembers as $member)
+
+                @if ($member->student_id !== $application->leader_student_id)
 
                 <div class="rounded-xl bg-slate-50 px-4 py-3">
 
@@ -250,6 +283,8 @@
                     </p>
 
                 </div>
+
+                @endif
 
                 @endforeach
 

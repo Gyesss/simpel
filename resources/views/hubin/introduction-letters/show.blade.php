@@ -21,7 +21,7 @@
 
                 <path
                     fill-rule="evenodd"
-                    d="M17 10a.75.75 0 0 1-.75.75H5.56l3.22 3.22a.75.75 0 1 1-1.06 1.06l3.22 3.22a.75.75 0 1 1 1.06 1.06l4.5 4.5a.75.75 0 0 1 0 1.06l-4.5 4.5a.75.75 0 1 1-1.06-1.06L10 10.75h6.25A.75.75 0 0 1 17 10Z"
+                    d="M17 10a.75.75 0 0 1-.75.75H5.56l3.22 3.22a.75.75 0 1 1-1.06 1.06l3.22 3.22a.75.75 0 1 1 1.06 1.06l4.5 4.5a.75.75 0 1 1-1.06 1.06L10 10.75h6.25A.75.75 0 0 1 17 10Z"
                     clip-rule="evenodd" />
 
             </svg>
@@ -321,7 +321,7 @@
                 </p>
 
                 <p class="mt-1 text-sm text-amber-600">
-                    {{ $application->groupMembers->count() }} anggota
+                    {{ $application->groupMembers->count() + 1 }} anggota
                 </p>
 
                 @else
@@ -337,8 +337,6 @@
         </div>
 
         {{-- Group Members --}}
-        @if ($application->groupMembers->isNotEmpty())
-
         <div class="border-t border-slate-100 px-6 py-5">
 
             <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">
@@ -347,7 +345,39 @@
 
             <div class="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
 
+                {{-- Leader --}}
+                @if ($application->leaderStudent)
+
+                <div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
+
+                    <div class="flex items-start justify-between gap-3">
+
+                        <div>
+
+                            <p class="text-sm font-medium text-slate-800">
+                                {{ $application->leaderStudent->full_name }}
+                            </p>
+
+                            <p class="mt-1 text-xs text-slate-500">
+                                {{ $application->leaderStudent->class ?? '-' }}
+                            </p>
+
+                        </div>
+
+                        <span class="shrink-0 rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-700">
+                            Ketua
+                        </span>
+
+                    </div>
+
+                </div>
+
+                @endif
+
+                {{-- Other Members --}}
                 @foreach ($application->groupMembers as $member)
+
+                @if ($member->student_id !== $application->leader_student_id)
 
                 <div class="rounded-xl border border-slate-100 bg-slate-50 px-4 py-3">
 
@@ -361,13 +391,13 @@
 
                 </div>
 
+                @endif
+
                 @endforeach
 
             </div>
 
         </div>
-
-        @endif
 
     </div>
 

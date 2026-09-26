@@ -206,16 +206,45 @@
                     </h2>
 
                     <p class="mt-1 text-sm text-slate-500">
-                        {{ $application->groupMembers->count() }} anggota terdaftar.
+                        {{ $application->groupMembers->count() + 1 }} anggota terdaftar.
                     </p>
 
                 </div>
 
-                @if ($application->groupMembers->isNotEmpty())
-
                 <div class="space-y-3">
 
+                    {{-- Leader --}}
+                    @if ($application->leaderStudent)
+
+                    <div class="flex items-center justify-between gap-4 rounded-xl border border-amber-200 bg-amber-50 p-4">
+
+                        <div>
+
+                            <p class="font-medium text-slate-900">
+                                {{ $application->leaderStudent->full_name }}
+                            </p>
+
+                            <p class="mt-1 text-sm text-slate-500">
+                                Kelas:
+                                {{ $application->leaderStudent->class ?? '-' }}
+                            </p>
+
+                        </div>
+
+                        <span class="shrink-0 rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
+                            Ketua
+                        </span>
+
+                    </div>
+
+                    @endif
+
+
+                    {{-- Other Members --}}
                     @foreach ($application->groupMembers as $member)
+
+                    {{-- Hindari ketua tampil dua kali jika ketua juga tersimpan di group_members --}}
+                    @if ($member->student_id !== $application->leader_student_id)
 
                     <div class="flex items-center justify-between gap-4 rounded-xl border border-slate-100 p-4">
 
@@ -232,27 +261,13 @@
 
                         </div>
 
-                        @if ($member->student_id === $application->leader_student_id)
-
-                        <span class="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
-                            Ketua
-                        </span>
-
-                        @endif
-
                     </div>
+
+                    @endif
 
                     @endforeach
 
                 </div>
-
-                @else
-
-                <p class="text-sm text-slate-500">
-                    Pengajuan ini tidak memiliki anggota kelompok tambahan.
-                </p>
-
-                @endif
 
             </div>
 

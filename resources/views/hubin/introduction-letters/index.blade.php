@@ -257,7 +257,7 @@
 
                             <p class="mt-1 text-xs text-amber-600">
                                 Ketua Kelompok ·
-                                {{ $application->groupMembers->count() }} anggota
+                                {{ $application->groupMembers->count() + 1 }} anggota
                             </p>
 
                             @endif

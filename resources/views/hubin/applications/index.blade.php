@@ -216,8 +216,9 @@
                     @foreach ($applications as $application)
 
                     @php
-                    $isGroup = $application->groupMembers->isNotEmpty();
                     $memberCount = $application->groupMembers->count();
+                    $totalMembers = $memberCount + 1;
+                    $isGroup = $memberCount > 0;
                     @endphp
 
                     <tr class="transition hover:bg-slate-50">
@@ -250,7 +251,7 @@
 
                                     </svg>
 
-                                    Kelompok · {{ $memberCount }} anggota
+                                    Kelompok · {{ $totalMembers }} anggota
 
                                 </span>
 
